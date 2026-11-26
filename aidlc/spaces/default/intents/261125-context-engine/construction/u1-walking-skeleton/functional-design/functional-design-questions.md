@@ -126,6 +126,12 @@ Does this all look correct before I generate the artifact?
 - MCP: AI agents can read an item, search approved items and propose changes; pending changes are marked "not yet approved" [Q7].
 - Seeded for the skeleton: a contributor, a human owner, an AI agent service account (Contributor role), and one group containing the human owner, so group ownership is proven end to end.
 
+**Organisations (added 2026-11-26, from the approved requirements FR14 and NFR14, domain design ADR-009, units Q7 and contracts; no new question needed)**
+- Two organisations are seeded, each reached at its own local address (for example `acme.localhost` and `globex.localhost`). The first has the accounts above; the second has its own owner and its own AI agent.
+- Every U1 record belongs to exactly one organisation. The organisation for each request comes from the address it arrived at and the credential (session or agent token), and the two must agree; otherwise the answer is "not found". U1 owns the single place that sets the organisation for each request, which U2 later extends with sign-up and suspension.
+- Proposals, decisions, links, owners, groups, searches and idempotency keys never cross organisations: an owner in one organisation cannot be listed as owner, or decide, in the other; a link cannot join items from two organisations.
+- The end-to-end check adds a final step: the second organisation's owner and agent cannot see, search, link to or decide on the first organisation's item, through the page or MCP.
+
 **New requirements this design records for later units** [Q8, Q11]
 - Organisations define their own item types and fields on top of the base item (U3 data, U19 settings).
 - Groups with members and a role and permission matrix (U2).

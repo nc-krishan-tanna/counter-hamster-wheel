@@ -1,6 +1,6 @@
 # Functional Spec — U1 walking skeleton
 
-U1 is the thin end-to-end slice (`inception/units-generation/unit-of-work.md`): knowledge goes in, is approved, is stored with its history, and is read back by a person on a basic web page and by an AI agent through MCP, all from containers. It delivers thin versions of four stories from `inception/user-stories/stories.md`: create an item (US2.1), decide on a proposal (US2.4), read an item (US3.5) and an AI agent reads organisational context (US4.1). Later units finish them (U3, U6, U14, U15, U18, U19).
+U1 is the thin end-to-end slice (`inception/units-generation/unit-of-work.md`): knowledge goes in, is approved, is stored with its history, and is read back by a person on a basic web page and by an AI agent through MCP, all from containers, with two organisations kept apart from the first table (US7.1). It delivers thin versions of four stories from `inception/user-stories/stories.md`: create an item (US2.1), decide on a proposal (US2.4), read an item (US3.5) and an AI agent reads organisational context (US4.1). Later units finish them (U3, U6, U14, U15, U18, U19).
 
 This file is the source of truth for the workflows and the proposal lifecycle. The data shape is in `entities.md` and the decision logic in `rules.md`; the diagram and table at the end are views derived from those two files.
 
@@ -14,6 +14,8 @@ This file is the source of truth for the workflows and the proposal lifecycle. T
 | Agent | ServiceAccount | Contributor | Reads, searches and proposes through MCP |
 
 The seeded accounts are configuration, not real organisation content, and their secrets come from the environment, never the repository (project rule).
+
+**Two seeded organisations (added 2026-11-26; BR6.1 to BR6.3).** The accounts above belong to the first organisation (for example "Acme", at `acme.localhost`). A second organisation ("Globex", at `globex.localhost`) has its own owner and its own agent. Every workflow below runs inside the organisation the request arrived at; its credential must belong to that organisation, otherwise the answer is "not found" (BR6.1).
 
 ## Workflows
 
@@ -61,6 +63,7 @@ The seeded accounts are configuration, not real organisation content, and their 
 3. The owner approves it (W4).
 4. The item appears on the basic page with its history (W5) and through MCP search and read (W6).
 5. The agent proposes a change through MCP (W3); the owner approves; the new version and its "AI agent" origin show in the page history and through MCP.
+6. As the second organisation (its address, its owner and its agent): the item is not found on the page or through MCP `get_item`, is absent from `search_knowledge`, cannot be linked to, and a decision on its proposal answers "not found" (BR6.1 to BR6.3). Using the first organisation's agent token at the second organisation's address also answers "not found".
 
 ## Proposal lifecycle
 
@@ -97,6 +100,8 @@ stateDiagram-v2
 | Storage fails during an approval | Nothing is applied; the proposal stays open and the person is told to try again (BR3.1, NFR10) |
 | A person or agent retries a proposal after a timeout | The same idempotency key returns the original proposal; the same key with a different request is refused (BR1.7) |
 | A proposal links to an item that is not approved yet | Refused; both ends must be approved items (BR1.5) |
+| A request names an item, owner or link end from another organisation | "Not found" or refused as unknown; nothing about the other organisation is revealed (BR6.1 to BR6.3) |
+| A credential is used at another organisation's address | "Not found" (BR6.1) |
 | A link proposal touches an item owned by someone else | The from-item's human owners decide in U1; whether the to-item's owners must also approve is decided in U6 |
 
 ## Derived views
@@ -126,12 +131,14 @@ erDiagram
 | Deciding | BR2.1 to BR2.7 |
 | History | BR3.1 to BR3.3 |
 | Reading | BR4.1, BR4.2 |
+| Organisations | BR6.1 to BR6.3 |
 
 ## What U1 leaves to later units
 
 | Left out | Unit |
 |---|---|
 | Real sign-in, roles and the group permission matrix | U2 |
+| Sign-up, suspension, operators and the support access log (organisations beyond the two seeded ones) | U2 |
 | Organisation-defined types, type fields, contexts, "applies to", archive | U3, U6 |
 | Request changes, withdraw, unowned items, Approver and Admin routes | U6 |
 | Impact assessment and conflict blocking at creation | U5, U6 |
