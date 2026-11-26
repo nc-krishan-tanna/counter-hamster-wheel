@@ -1623,3 +1623,902 @@
 **Answer Mode**: guide (reused from intent-capture)
 
 ---
+
+## Question Asked
+**Timestamp**: 2026-11-26T11:01:39Z
+**Event**: QUESTION_ASKED
+**Question Id**: 4408bd75
+**Question Type**: construction-staffing
+**Question Chat**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question Shows**: sha256:e3283aa2993f3f591ff7cd2ee44b9490b574ab19b9dacc62e4bc2df4d63cec3f
+**Stage**: functional-design
+**Options**: ["Just me","Several teams"]
+**State Digest**: b76910f1720b9d728605a6be379712db641b08aec21f16697fac945866a1e3da
+**Question Text SHA-256**: 4324e942a21e9eb63e529d85925a6698998708ae1da32ad2331e2ed0c3ff8f45
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:02:05Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: picker
+**Open Question**: construction-staffing
+**Picked**: ["Just me"]
+**Message Id**: 612705e2
+**Open Questions**: 4408bd75
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/delivery-planning/delivery-planning-questions.md","entries":{"Q1":"78899e48017d45d1","Q2":"2cccf53463cb2d5c","Q3":"a14dbd311869e358","Q4":"f21bc6b284663d80","Q5":"a11b30bd7584b3ee","Q6":"c667499b6ea7ad65","Q7":"fa2c2eb78397f3b9","Consolidated Summary Confirmation":"803cbd2438d1ee95"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:02:05Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: Inception is done, and the plan has 20 Units. Who builds them?
+**Question Id**: 4408bd75
+**Reply**: Just me
+**Options**: ["Just me","Several teams"]
+
+---
+
+## Unit Ownership Set
+**Timestamp**: 2026-11-26T11:02:07Z
+**Event**: UNIT_OWNERSHIP_SET
+**Mode**: solo
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:02:30Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: ae32e94984f67ba80
+**Message**: go ahead with U1 design
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:03:12Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: typed
+**Message Id**: 3913e6d3
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:03:52Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T11:03:54Z
+**Event**: DECISION_RECORDED
+**Stage**: functional-design
+**Decision**: Q1, Q2, Q3, Q4
+**Options**: Q1: All types, shared fields only; One generic type; All types with full fields | Q2: Create and change; Create only; Create, change and links | Q3: Approve and reject with reason; Approve only; All decisions plus withdraw | Q4: Owner required, only owner decides, no self-approval; Owner optional with stand-in Admin; Self-approval flagged
+**Unit**: u1-walking-skeleton
+**Question Id**: 6a4a2add
+**Question Type**: stage-question
+**Question Chat**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question Shows**: sha256:764a33757360cf5fb22a4da727318680f9a77ef0d501c9558334d8526ed0b96b
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:10:29Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: picker
+**Picked**: ["We need a base type for the item to be then extended as needed for each org","Create, change, links","Approve and reject (Recommended)","Self-approval flagged"]
+**Message Id**: d7c58c21
+**Open Questions**: 6a4a2add
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:10:29Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q1. Which item types does the U1 skeleton support? (The full product has rules, processes, systems and more, each with its own fields.)
+**Reply**: We need a base type for the item to be then extended as needed for each org
+**Options**: ["All types, shared fields (Recommended)","One generic type","All types, full fields"]
+**Recommended**: ["All types, shared fields"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:10:29Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q2. What can a proposal do in the skeleton?
+**Reply**: Create, change, links
+**Options**: ["Create and change (Recommended)","Create only","Create, change, links"]
+**Recommended**: ["Create and change"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:10:29Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q3. Which decisions can the owner make in the skeleton?
+**Reply**: Approve and reject (Recommended)
+**Options**: ["Approve and reject (Recommended)","Approve only","All decisions + withdraw"]
+**Recommended**: ["Approve and reject"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:10:29Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q4. Who approves, and can someone approve their own proposal? (Two seeded accounts: a contributor and an owner. Full rules come in U6.)
+**Reply**: Self-approval flagged
+**Options**: ["Owner required, no self (Recommended)","Owner optional","Self-approval flagged"]
+**Recommended**: ["Owner required, no self"]
+
+---
+
+## Question Answered
+**Timestamp**: 2026-11-26T11:10:43Z
+**Event**: QUESTION_ANSWERED
+**Stage**: functional-design
+**Details**: Q1: Other - We need a base type for the item to be then extended as needed for each org; Q2: Create, change, links; Q3: Approve and reject (Recommended); Q4: Self-approval flagged
+**Unit**: u1-walking-skeleton
+**Message Id**: d7c58c21
+**Person Reply**: We need a base type for the item to be then extended as needed for each org\nCreate, change, links\nApprove and reject (Recommended)\nSelf-approval flagged
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T11:10:52Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T11:10:54Z
+**Event**: DECISION_RECORDED
+**Stage**: functional-design
+**Decision**: Q5, Q6, Q7, Q8
+**Options**: Q5: Both open, out-of-date refused; One open per item; Last approval wins | Q6: Content, reason, type, owner, history, pending note; Content and owner only; Also links and sources | Q7: Read by id and search, pending marked; Read by id only; Read, search and propose | Q8: Base item with starting list, org types in U3/U19; Admin adds type names in skeleton; Admin adds types with fields in skeleton
+**Unit**: u1-walking-skeleton
+**Question Id**: 915df3d3
+**Question Type**: stage-question
+**Question Chat**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question Shows**: sha256:e859f91feea12d2cdf9d0b8355a497b77284b376eaf921c94352bc8878b7e13f
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:15:47Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: picker
+**Picked**: ["Both open, stale refused (Recommended)","Also links and sources","Read, search, propose","Base item now, custom later (Recommended)"]
+**Message Id**: 5d199f79
+**Open Questions**: 6a4a2add, 915df3d3
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:15:47Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Tech lead] Q5. What if two proposals change the same item?
+**Reply**: Both open, stale refused (Recommended)
+**Options**: ["Both open, stale refused (Recommended)","One open per item","Last approval wins"]
+**Recommended**: ["Both open, stale refused"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:15:47Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q6. What does the basic item page show?
+**Reply**: Also links and sources
+**Options**: ["Content + history (Recommended)","Content and owner only","Also links and sources"]
+**Recommended**: ["Content + history"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:15:47Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Tech lead] Q7. What can an AI agent do through MCP in the skeleton?
+**Reply**: Read, search, propose
+**Options**: ["Read + search (Recommended)","Read by id only","Read, search, propose"]
+**Recommended**: ["Read + search"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:15:47Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q8. Follow-up to Q1: you want a base item type each organisation extends. The requirements list seven fixed types, so org-defined types are new. Where do they go?
+**Reply**: Base item now, custom later (Recommended)
+**Options**: ["Base item now, custom later (Recommended)","Admin adds type names now","Admin adds types + fields"]
+**Recommended**: ["Base item now, custom later"]
+
+---
+
+## Question Answered
+**Timestamp**: 2026-11-26T11:15:54Z
+**Event**: QUESTION_ANSWERED
+**Stage**: functional-design
+**Details**: Q5: Both open, stale refused (Recommended); Q6: Also links and sources; Q7: Read, search, propose; Q8: Base item now, custom later (Recommended)
+**Unit**: u1-walking-skeleton
+**Message Id**: 5d199f79
+**Person Reply**: Both open, stale refused (Recommended)\nAlso links and sources\nRead, search, propose\nBase item now, custom later (Recommended)
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T11:15:59Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T11:16:01Z
+**Event**: DECISION_RECORDED
+**Stage**: functional-design
+**Decision**: Q9, Q10
+**Options**: Q9: Owner required, self-approval allowed but flagged; Owner optional with stand-in Admin | Q10: Sources added by hand (title and optional address); No sources in skeleton
+**Unit**: u1-walking-skeleton
+**Question Id**: 824ebbde
+**Question Type**: stage-question
+**Question Chat**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question Shows**: sha256:88d21bb378355af22601bad83f55a4e54e1f9c41f400f002fc637a8028468f19
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:31:21Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: picker
+**Picked**: ["[User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]","[User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]"]
+**Message Id**: f104ea88
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa","Q10":"c69489947dfe909e"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:31:21Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q9. Follow-up to Q4: you chose that owners may approve their own proposals, flagged. Must every item have an owner in the skeleton? (Requirements make the owner optional; unowned items go to Approvers or Admins in U6.)
+**Reply**: [User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]
+**Options**: ["Owner required (Recommended)","Owner optional"]
+**Recommended**: ["Owner required"]
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:31:21Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q10. Follow-up to Q6: you chose to show sources. Sources normally come from connected tools (U8, U9), which the skeleton lacks. Where do they come from?
+**Reply**: [User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]
+**Options**: ["Added by hand (Recommended)","No sources yet"]
+**Recommended**: ["Added by hand"]
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:31:21Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: typed
+**Message Id**: 1aa9b0aa
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa","Q10":"c69489947dfe909e"}}
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:31:51Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: af2249a0a4047bdf3
+**Message**: any single tech lead can approve, agents never approve
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:40:32Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: typed
+**Message Id**: bfe3bc12
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa","Q10":"c69489947dfe909e"}}
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T11:40:43Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T11:40:49Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Question Answered
+**Timestamp**: 2026-11-26T11:40:50Z
+**Event**: QUESTION_ANSWERED
+**Stage**: functional-design
+**Details**: Q9: Other - owners are always an array (group with one member fine); one owner approval is enough; agents cannot approve (from the ownership discussion, recorded as Q11)
+**Unit**: u1-walking-skeleton
+**Message Id**: bfe3bc12
+**Person Reply**: 1: owners are always an array of elements. Never a single one (unless a group contains one single item which is fine)\n2: Groups have a role and permission matrix\n3: fine\n4: yes exactly\n5: yes\n6: yes\n\nOne owner approval is fine\nyes agents cannot approve\nyes it who the rule applies to\ncontext should track linked context. The link defines the relationship. It can be both a item that links to an item or a container that hands down info but the owner override will be discussed more when we get to the unit\nConflicts to flag. Ideally would be stopped at creation
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T11:40:53Z
+**Event**: DECISION_RECORDED
+**Stage**: functional-design
+**Decision**: Q10
+**Options**: Added by hand (title and optional address); No sources in skeleton
+**Unit**: u1-walking-skeleton
+**Question Id**: c0ce0c03
+**Question Type**: stage-question
+**Question Chat**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question Shows**: sha256:a7abae159a98565481941bd708d2dcd0fa1c8149f7d655e3894d5ce7c94c31dd
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:42:02Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: picker
+**Picked**: ["source can be self-generated or hand-generated if needed"]
+**Message Id**: 4e87bc5b
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde, c0ce0c03
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa","Q10":"c69489947dfe909e","Q11":"50035406c8529bc4"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:42:03Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: [Product owner] Q10. You chose to show sources on the item page. Sources normally come from connected tools (U8, U9), which the skeleton doesn't have. Where do they come from in U1?
+**Reply**: source can be self-generated or hand-generated if needed
+**Options**: ["Added by hand (Recommended)","No sources yet"]
+**Recommended**: ["Added by hand"]
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T11:42:08Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Question Answered
+**Timestamp**: 2026-11-26T11:42:09Z
+**Event**: QUESTION_ANSWERED
+**Stage**: functional-design
+**Details**: Q10: Other - source can be self-generated or hand-generated if needed
+**Unit**: u1-walking-skeleton
+**Message Id**: 4e87bc5b
+**Person Reply**: source can be self-generated or hand-generated if needed
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T11:42:28Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T11:42:31Z
+**Event**: DECISION_RECORDED
+**Stage**: functional-design
+**Decision**: Does this all look correct before I generate the artifact?
+**Options**: Looks correct,Request changes
+**Checkpoint**: Consolidated Summary Confirmation
+**Questions File**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Unit**: u1-walking-skeleton
+**Question Id**: f61b27fc
+**Question Type**: summary-confirmation
+**Question Chat**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question Shows**: sha256:d72931be9fe1feaeddb2a26818da3356950c105c715f2ce8301133c2664ff4b0
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:45:36Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: picker
+**Picked**: ["Looks correct"]
+**Message Id**: 7d110040
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde, c0ce0c03, f61b27fc
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa","Q10":"c69489947dfe909e","Q11":"50035406c8529bc4","Consolidated Summary Confirmation":"d15bec79da95bd72"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T11:45:36Z
+**Event**: QUESTION_REPLIED
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Question**: Does this all look correct before I generate the artifact?
+**Question Id**: f61b27fc
+**Reply**: Looks correct
+**Options**: ["Looks correct","Request changes"]
+
+---
+
+## Summary Confirmation Recorded
+**Timestamp**: 2026-11-26T11:45:40Z
+**Event**: SUMMARY_CONFIRMATION_RECORDED
+**Stage**: functional-design
+**Details**: Looks correct
+**Checkpoint**: Consolidated Summary Confirmation
+**Questions File**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Questions SHA-256**: fc6eb2ae7fda9963648724e8e2bf32b0ea5215f9a688f22fbc2e2d428c0826ba
+**Hash Scope**: confirmed-content-v2
+**Unit**: u1-walking-skeleton
+**Message Id**: 7d110040
+**Message Ids**: 3913e6d3,f104ea88,1aa9b0aa,7d110040
+**Person Reply**: Start U1 design\n[User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]\n[User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]\nWe're thinking something like this for the item owenrship structure. Tell me what you make out of this and we can discuss\nLooks correct
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:46:30Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:46:59Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/rules.md
+**Context**: construction > u1-walking-skeleton > functional-design > rules.md
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:47:44Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:47:58Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Context**: construction > u1-walking-skeleton > functional-design > traceability.json
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T11:48:06Z
+**Event**: SENSOR_FIRED
+**Fire id**: c6589e01
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T11:48:06Z
+**Event**: SENSOR_PASSED
+**Fire id**: c6589e01
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Duration ms**: 85
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T11:48:06Z
+**Event**: SENSOR_FIRED
+**Fire id**: 9b010aab
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/rules.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T11:48:06Z
+**Event**: SENSOR_PASSED
+**Fire id**: 9b010aab
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/rules.md
+**Duration ms**: 80
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T11:48:06Z
+**Event**: SENSOR_FIRED
+**Fire id**: eeef6045
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T11:48:06Z
+**Event**: SENSOR_PASSED
+**Fire id**: eeef6045
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Duration ms**: 84
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: SENSOR_FIRED
+**Fire id**: a67c7aa5
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: SENSOR_PASSED
+**Fire id**: a67c7aa5
+**Sensor ID**: required-sections
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Duration ms**: 85
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: SENSOR_FIRED
+**Fire id**: 9c906153
+**Sensor ID**: upstream-coverage
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: SENSOR_PASSED
+**Fire id**: 9c906153
+**Sensor ID**: upstream-coverage
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Duration ms**: 83
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: SENSOR_FIRED
+**Fire id**: e012815b
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: SENSOR_PASSED
+**Fire id**: e012815b
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Duration ms**: 88
+
+---
+
+## Review Requested
+**Timestamp**: 2026-11-26T11:48:07Z
+**Event**: REVIEW_REQUESTED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 1
+**Artifact Fingerprint**: sha256:bbbe31fa242ef6f7e12b5ba099e3d2a590cec5ac33ab05f4123e6003e3233b0f
+**Request Id**: review:244a477df87abf2e9acc81daf56c2e40
+**Review File**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/1.244a477df87abf2e9acc81daf56c2e40.review.md
+
+---
+
+## Subagent Dispatched
+**Timestamp**: 2026-11-26T11:48:20Z
+**Event**: SUBAGENT_DISPATCHED
+**Agent Type**: aidlc-architecture-reviewer-agent
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:48:33Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/memory.md
+**Context**: construction > u1-walking-skeleton > functional-design > memory.md
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:48:37Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: a091418b612bec066
+**Message**: commit push and create a PR
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:49:24Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/.aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/1.244a477df87abf2e9acc81daf56c2e40.review.md
+**Context**: .aidlc-engine > reviews > functional-design > units > u1-walking-skeleton > 9e7bb4437efd8e30 > 1.244a477df87abf2e9acc81daf56c2e40.review.md
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:49:31Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: aidlc-architecture-reviewer-agent
+**Agent ID**: ab7717e62514e0935
+**Review File Digest**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/1.244a477df87abf2e9acc81daf56c2e40.review.md=25034643cd962d65c4ed487c083e649170b1283fcf24e1e29ae070012dfdf240
+
+---
+
+## Host Turn
+**Timestamp**: 2026-11-26T11:49:31Z
+**Event**: HOST_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: host
+**Reason**: claude agent message
+**Source**: template
+
+---
+
+## Review Completed
+**Timestamp**: 2026-11-26T11:49:33Z
+**Event**: REVIEW_COMPLETED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 1
+**Verdict**: NOT-READY
+**Review Verdict Dictated**: no
+**Request Fingerprint**: sha256:bbbe31fa242ef6f7e12b5ba099e3d2a590cec5ac33ab05f4123e6003e3233b0f
+**Artifact Fingerprint**: sha256:bbbe31fa242ef6f7e12b5ba099e3d2a590cec5ac33ab05f4123e6003e3233b0f
+**Request Id**: review:244a477df87abf2e9acc81daf56c2e40
+**Review Record**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/1.json
+**Review Record Digest**: sha256:d3aa01dadb4686f993eca43c4b98ec662a4b3ba8286497b533742471f1c71ed1
+
+---
+
+## Review Requested
+**Timestamp**: 2026-11-26T11:50:28Z
+**Event**: REVIEW_REQUESTED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 2
+**Artifact Fingerprint**: sha256:18cd77b461c424b5ae84d49f27d7a9c003d188c55af1502083b6cad6e4ab1e63
+**Request Id**: review:26dbf099dbb31970156fad8b77dab3a4
+**Review File**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.26dbf099dbb31970156fad8b77dab3a4.review.md
+
+---
+
+## Review Requested
+**Timestamp**: 2026-11-26T11:50:36Z
+**Event**: REVIEW_REQUESTED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 2
+**Artifact Fingerprint**: sha256:b18845aac58ffa147562c09d95ee5f2cc097085c8f6f21744e50048026377dc7
+**Request Id**: review:1503f9be94b1ce9ff408d7d07c09c596
+**Replaces Request Id**: review:26dbf099dbb31970156fad8b77dab3a4
+**Review File**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.1503f9be94b1ce9ff408d7d07c09c596.review.md
+
+---
+
+## Subagent Dispatched
+**Timestamp**: 2026-11-26T11:50:55Z
+**Event**: SUBAGENT_DISPATCHED
+**Agent Type**: aidlc-architecture-reviewer-agent
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:50:58Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: a2893daddc2b26b5b
+**Message**: what did the reviewer flag?
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T11:51:17Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/.aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.1503f9be94b1ce9ff408d7d07c09c596.review.md
+**Context**: .aidlc-engine > reviews > functional-design > units > u1-walking-skeleton > 9e7bb4437efd8e30 > 2.1503f9be94b1ce9ff408d7d07c09c596.review.md
+
+---
+
+## Host Turn
+**Timestamp**: 2026-11-26T11:51:21Z
+**Event**: HOST_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: host
+**Reason**: claude agent message
+**Source**: template
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:51:21Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: aidlc-architecture-reviewer-agent
+**Agent ID**: adec9540a47c6e516
+**Review File Digest**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.26dbf099dbb31970156fad8b77dab3a4.review.md=absent; .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.1503f9be94b1ce9ff408d7d07c09c596.review.md=e96c94f9bf2890ae47bd03a6078ff5c993b143769091e33baf82738939647b6a
+
+---
+
+## Review Completed
+**Timestamp**: 2026-11-26T11:51:24Z
+**Event**: REVIEW_COMPLETED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 2
+**Verdict**: READY
+**Review Verdict Dictated**: no
+**Request Fingerprint**: sha256:b18845aac58ffa147562c09d95ee5f2cc097085c8f6f21744e50048026377dc7
+**Artifact Fingerprint**: sha256:b18845aac58ffa147562c09d95ee5f2cc097085c8f6f21744e50048026377dc7
+**Request Id**: review:1503f9be94b1ce9ff408d7d07c09c596
+**Review Record**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.json
+**Review Record Digest**: sha256:fc51e7410e3b84f74ee550bff6ef98e43b07dce6f28da0c7c8df419f50d99755
+
+---
+
+## Unit Started
+**Timestamp**: 2026-11-26T11:51:36Z
+**Event**: UNIT_STARTED
+**Stage**: functional-design
+**Unit**: u1-walking-skeleton
+**Run floor**: WORKFLOW_STARTED:2026-11-25T14:02:33Z#1
+
+---
+
+## Unit Completed
+**Timestamp**: 2026-11-26T11:51:36Z
+**Event**: UNIT_COMPLETED
+**Stage**: functional-design
+**Unit**: u1-walking-skeleton
+**Run floor**: WORKFLOW_STARTED:2026-11-25T14:02:33Z#1
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:51:49Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: a905a538e8d74ce96
+**Message**: Continue to NFR
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:52:27Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: typed
+**Message Id**: 6b27b3bc
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde, c0ce0c03
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T11:52:43Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: a9a51e926278e4f31
+**Message**: delete both and continue to NFR
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T11:53:52Z
+**Event**: HUMAN_TURN
+**Session**: d9de8b48-3ad4-4154-8e79-55c9674cc8e6
+**Origin**: person
+**Source**: typed
+**Message Id**: 768e868f
+**Open Questions**: 6a4a2add, 915df3d3, 824ebbde, c0ce0c03
+
+---
