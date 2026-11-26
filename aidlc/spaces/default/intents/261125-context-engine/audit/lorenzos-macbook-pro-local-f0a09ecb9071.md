@@ -6285,3 +6285,685 @@
 **Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md","entries":{"Q1":"b372d9406556d768","Q2":"122fbf01469dbad3","Q3":"1ed45a809115a615","Q4":"9a3d39c173dde9f0","Q5":"4b14da04b3bb291f","Consolidated Summary Confirmation":"480034798b073cd4","Q6":"930885cea901f66f"}}
 
 ---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T14:45:22Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: a014118f2ee679acd
+**Message**: Own address per organisation
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T14:46:43Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: typed
+**Message Id**: 727759e6
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, 32897399
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md","entries":{"Q1":"b372d9406556d768","Q2":"122fbf01469dbad3","Q3":"1ed45a809115a615","Q4":"9a3d39c173dde9f0","Q5":"4b14da04b3bb291f","Consolidated Summary Confirmation":"480034798b073cd4","Q6":"930885cea901f66f"}}
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T14:47:57Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: picker
+**Picked**: ["Own address per organisation"]
+**Message Id**: 5ce6449e
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, 32897399
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md","entries":{"Q1":"b372d9406556d768","Q2":"122fbf01469dbad3","Q3":"1ed45a809115a615","Q4":"9a3d39c173dde9f0","Q5":"4b14da04b3bb291f","Consolidated Summary Confirmation":"480034798b073cd4","Q6":"930885cea901f66f"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T14:47:57Z
+**Event**: QUESTION_REPLIED
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question**: [Designer] How do people reach their own organisation on the hosted service? (An account belongs to one organisation, and the same email can have accounts in several)
+**Reply**: Own address per organisation
+**Options**: ["Own address per organisation","Type organisation name first","Email then pick organisation"]
+
+---
+
+## Question Answered
+**Timestamp**: 2026-11-26T14:47:59Z
+**Event**: QUESTION_ANSWERED
+**Stage**: refined-mockups
+**Details**: Q6: Own address per organisation
+**Person Reply**: [User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]\nbefore we do that, commit all and open PR\nok Pr merged. Start a new branch from main for refined mockups\nOwn address per organisation
+**Message Id**: 5ce6449e
+**Message Ids**: cea5c313,c6681c67,727759e6,5ce6449e
+
+---
+
+## Artifact Reused
+**Timestamp**: 2026-11-26T14:48:00Z
+**Event**: ARTIFACT_REUSED
+**Stage**: refined-mockups
+**Decision**: modify
+**Artifacts**: mockups.md,interaction-spec.md,design-system-mapping.md,accessibility-checklist.md,refined-mockups-questions.md
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:04Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Context**: inception > refined-mockups > refined-mockups-questions.md
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:07Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Context**: inception > refined-mockups > refined-mockups-questions.md
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T14:48:09Z
+**Event**: DECISION_RECORDED
+**Stage**: refined-mockups
+**Decision**: Does this all look correct before I generate the artifact?
+**Options**: Looks correct,Request changes
+**Checkpoint**: Consolidated Summary Confirmation
+**Questions File**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Question Id**: ea1304db
+**Question Type**: summary-confirmation
+**Question Chat**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question Shows**: sha256:6eb30b44e5a8f3f3fcec1243e6f3ffac4f7e362638b0584773f1ce0f056ed2cc
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T14:48:27Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: picker
+**Picked**: ["Looks correct"]
+**Message Id**: ed782b75
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, 32897399, ea1304db
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md","entries":{"Q1":"b372d9406556d768","Q2":"122fbf01469dbad3","Q3":"1ed45a809115a615","Q4":"9a3d39c173dde9f0","Q5":"4b14da04b3bb291f","Consolidated Summary Confirmation":"6160c623eddf6f1e","Q6":"930885cea901f66f"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T14:48:28Z
+**Event**: QUESTION_REPLIED
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question**: - Component library: shadcn/ui, restylable per organisation (unchanged)\n- Editing: document-style editor plus an AI ask box, with impact shown before proposing (unchanged)\n- Linking: type @ while writing, plus AI-suggested links (unchanged)\n- Theme: light and dark following the device, with a switch (unchanged)\n- Notifications: web app, chat and email, each person choosing (unchanged)\n- Carried forward: 3D map home with side panel and list view, clean neutral look, responsive, WCAG 2.1 AA\n- New: each hosted organisation has its own web address chosen at sign-up; signing in there means that organisation\n- New screens: sign-up, sign-in at the organisation's address, a suspended-organisation notice, the operator console, and the support access log in Admin settings; none appear on a self-hosted install\n\nDoes this all look correct before I generate the artifact?
+**Reply**: Looks correct
+**Options**: ["Looks correct","Request changes"]
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:30Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Context**: inception > refined-mockups > refined-mockups-questions.md
+
+---
+
+## Summary Confirmation Recorded
+**Timestamp**: 2026-11-26T14:48:31Z
+**Event**: SUMMARY_CONFIRMATION_RECORDED
+**Stage**: refined-mockups
+**Details**: Looks correct
+**Checkpoint**: Consolidated Summary Confirmation
+**Questions File**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Questions SHA-256**: 6b1485351eb04413448a3516d6dd9438678bd06363c5319671e8dc8ed35e71b5
+**Hash Scope**: confirmed-content-v2
+**Message Id**: ed782b75
+**Person Reply**: Looks correct
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:40Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Context**: inception > refined-mockups > mockups.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:43Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Context**: inception > refined-mockups > mockups.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:45Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Context**: inception > refined-mockups > mockups.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:48:59Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Context**: inception > refined-mockups > mockups.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:49:01Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Context**: inception > refined-mockups > mockups.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:49:07Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/interaction-spec.md
+**Context**: inception > refined-mockups > interaction-spec.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:49:10Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/design-system-mapping.md
+**Context**: inception > refined-mockups > design-system-mapping.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:49:13Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/accessibility-checklist.md
+**Context**: inception > refined-mockups > accessibility-checklist.md
+**Summary Authorization Id**: 76396f51ae010966b074422f3169aa6a4472d46d1faa308493a1ff05fed929e5
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:49:14Z
+**Event**: SENSOR_FIRED
+**Fire id**: 2508bfc1
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:49:14Z
+**Event**: SENSOR_PASSED
+**Fire id**: 2508bfc1
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Duration ms**: 87
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:49:14Z
+**Event**: SENSOR_FIRED
+**Fire id**: 38a430fe
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/interaction-spec.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:49:14Z
+**Event**: SENSOR_PASSED
+**Fire id**: 38a430fe
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/interaction-spec.md
+**Duration ms**: 87
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_FIRED
+**Fire id**: e44906f0
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/design-system-mapping.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_PASSED
+**Fire id**: e44906f0
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/design-system-mapping.md
+**Duration ms**: 83
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_FIRED
+**Fire id**: b1560489
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/accessibility-checklist.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_PASSED
+**Fire id**: b1560489
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/accessibility-checklist.md
+**Duration ms**: 78
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_FIRED
+**Fire id**: 844d0386
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_PASSED
+**Fire id**: 844d0386
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Duration ms**: 78
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_FIRED
+**Fire id**: f3596269
+**Sensor ID**: upstream-coverage
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: SENSOR_PASSED
+**Fire id**: f3596269
+**Sensor ID**: upstream-coverage
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Duration ms**: 82
+
+---
+
+## Review Requested
+**Timestamp**: 2026-11-26T14:49:15Z
+**Event**: REVIEW_REQUESTED
+**Stage**: refined-mockups
+**Reviewer**: aidlc-product-lead-agent
+**Iteration**: 1
+**Artifact Fingerprint**: sha256:93c8d1d063f4a1ad1916627ce5e29f5c5f4a0c3100cf616e061e3aec01b1edc5
+**Request Id**: review:1e1392569a894940c0a97f6e0f654498
+**Review File**: .aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.1e1392569a894940c0a97f6e0f654498.review.md
+
+---
+
+## Subagent Dispatched
+**Timestamp**: 2026-11-26T14:49:25Z
+**Event**: SUBAGENT_DISPATCHED
+**Agent Type**: aidlc-product-lead-agent
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T14:49:54Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/.aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.1e1392569a894940c0a97f6e0f654498.review.md
+**Context**: .aidlc-engine > reviews > refined-mockups > stage > dbd8c61a03e7cb7e > 1.1e1392569a894940c0a97f6e0f654498.review.md
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T14:50:00Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: aidlc-product-lead-agent
+**Agent ID**: a5d61771802dffa3c
+**Review File Digest**: .aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.1e1392569a894940c0a97f6e0f654498.review.md=ce72fd8ab92c126ef5dd9e9653f2a6e5d129f8fed7d5886adcb65381ab09667a
+
+---
+
+## Host Turn
+**Timestamp**: 2026-11-26T14:50:01Z
+**Event**: HOST_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: host
+**Reason**: claude agent message
+**Source**: template
+
+---
+
+## Review Completed
+**Timestamp**: 2026-11-26T14:50:03Z
+**Event**: REVIEW_COMPLETED
+**Stage**: refined-mockups
+**Reviewer**: aidlc-product-lead-agent
+**Iteration**: 1
+**Verdict**: READY
+**Review Verdict Dictated**: no
+**Request Fingerprint**: sha256:93c8d1d063f4a1ad1916627ce5e29f5c5f4a0c3100cf616e061e3aec01b1edc5
+**Artifact Fingerprint**: sha256:93c8d1d063f4a1ad1916627ce5e29f5c5f4a0c3100cf616e061e3aec01b1edc5
+**Request Id**: review:1e1392569a894940c0a97f6e0f654498
+**Review Record**: .aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json
+**Review Record Digest**: sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:50:04Z
+**Event**: SENSOR_FIRED
+**Fire id**: a345663a
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:50:04Z
+**Event**: SENSOR_PASSED
+**Fire id**: a345663a
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Duration ms**: 82
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_FIRED
+**Fire id**: d0bf564e
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/interaction-spec.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_PASSED
+**Fire id**: d0bf564e
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/interaction-spec.md
+**Duration ms**: 78
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_FIRED
+**Fire id**: e2eaca82
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/design-system-mapping.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_PASSED
+**Fire id**: e2eaca82
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/design-system-mapping.md
+**Duration ms**: 84
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_FIRED
+**Fire id**: 036e2c94
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/accessibility-checklist.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_PASSED
+**Fire id**: 036e2c94
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/accessibility-checklist.md
+**Duration ms**: 80
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_FIRED
+**Fire id**: 8f6ae755
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_PASSED
+**Fire id**: 8f6ae755
+**Sensor ID**: required-sections
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md
+**Duration ms**: 81
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_FIRED
+**Fire id**: fbe2ca0b
+**Sensor ID**: upstream-coverage
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: SENSOR_PASSED
+**Fire id**: fbe2ca0b
+**Sensor ID**: upstream-coverage
+**Stage slug**: refined-mockups
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md
+**Duration ms**: 102
+
+---
+
+## Stage Awaiting Approval
+**Timestamp**: 2026-11-26T14:50:05Z
+**Event**: STAGE_AWAITING_APPROVAL
+**Stage**: refined-mockups
+**Next Stage**: domain-design
+**Brief Digest**: none
+**Sensor State**: required-sections@aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md=passed; required-sections@aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/interaction-spec.md=passed; required-sections@aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/design-system-mapping.md=passed; required-sections@aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/accessibility-checklist.md=passed; required-sections@aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md=passed; upstream-coverage@aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md=passed
+**Open Decisions**: 0
+**Question Id**: 1c31764c
+**Question Type**: gate
+**Question Chat**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question Shows**: sha256:25edc4b8c7210a4c84a0b0ed054b0f572c9fef25e84c877560714d3683186435
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T14:50:47Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: picker
+**Picked**: ["Approve"]
+**Message Id**: 7be03fa5
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, 32897399, 1c31764c
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/refined-mockups-questions.md","entries":{"Q1":"b372d9406556d768","Q2":"122fbf01469dbad3","Q3":"1ed45a809115a615","Q4":"9a3d39c173dde9f0","Q5":"4b14da04b3bb291f","Consolidated Summary Confirmation":"6160c623eddf6f1e","Q6":"930885cea901f66f"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T14:50:48Z
+**Event**: QUESTION_REPLIED
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question**: Refined Mockups complete. How would you like to proceed?
+**Reply**: Approve
+**Options**: ["Approve","Request Changes"]
+
+---
+
+## Gate Approved
+**Timestamp**: 2026-11-26T14:50:50Z
+**Event**: GATE_APPROVED
+**Stage**: refined-mockups
+**User Input**: Approve
+**Person Reply**: Approve
+**Message Id**: 7be03fa5
+**Review Finding Dispositions**: {"version":1,"dispositions":[{"artifact":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md","id":"R-01","fingerprint":"sha256:ecd975657d8b5a5d7741925613d0c2a77f65c1cc95f399653f3f2a4ac02ddaa2","status":"Accepted risk","decided_at_severity":"Major","reviewed_record":{"path":".aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json","digest":"sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769"}},{"artifact":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md","id":"R-02","fingerprint":"sha256:1b32671c19e01a2e557f96fa1f7415931b9221b2513fd9f8dc3d911cfe588610","status":"Accepted risk","decided_at_severity":"Major","reviewed_record":{"path":".aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json","digest":"sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769"}},{"artifact":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md","id":"R-03","fingerprint":"sha256:16509b04289c0bb30fa4349a4559b462fcaa6c4cef35338495b08919ec34d3fb","status":"Accepted risk","decided_at_severity":"Minor","reviewed_record":{"path":".aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json","digest":"sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769"}},{"artifact":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md","id":"R-04","fingerprint":"sha256:b57e98dc5c833de42eec8ae7beb22b666021a0fd3862d4f383520240115d5aac","status":"Accepted risk","decided_at_severity":"Minor","reviewed_record":{"path":".aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json","digest":"sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769"}},{"artifact":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md","id":"R-05","fingerprint":"sha256:b80e1ef03e10c2acedb258f00043922c5995ce3e5118e83db7bbb9a6a709804e","status":"Accepted risk","decided_at_severity":"Minor","reviewed_record":{"path":".aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json","digest":"sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769"}},{"artifact":"aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md","id":"R-06","fingerprint":"sha256:50d568ae2af29f568a252f5a4c9dae1a3f02ae5062d07db2727ea49790a130db","status":"Accepted risk","decided_at_severity":"Minor","reviewed_record":{"path":".aidlc-engine/reviews/refined-mockups/stage/dbd8c61a03e7cb7e/1.json","digest":"sha256:fed6235d5fee4136110fa903c20158bf7cd7cec71cbbe1b0d15f389098353769"}}]}
+**Brief Digest**: sha256:1c9912acb6ab641a2096ec04f238c993ff2520e4192d91ebd408a753430246ac
+
+---
+
+## Stage Completion
+**Timestamp**: 2026-11-26T14:50:50Z
+**Event**: STAGE_COMPLETED
+**Stage**: refined-mockups
+**Validation Basis**: {"graphContract":"sha256:1a7e70cdfb1d73053413bd56f097d9ff0d54335f76ef8bdcffe4dca6c7d2b904","inputs":[{"artifact":"requirements","contentHash":"sha256:6c3d93de673b72e3b4399bc43ee60d954a98b245f885d0d2f95e7ed6bf9ff59a","instanceCount":1,"presentCount":1,"producer":"requirements-analysis","required":true,"structureHash":"sha256:d64b637069c1ef76ac3d86f8b98cebf64c7819833f06a98415955209cad16e9d"},{"artifact":"stories","contentHash":"sha256:d96ca3b77156de8a692b5dc4a136ce4af37522ed08ca532f437adda248e39c88","instanceCount":1,"presentCount":1,"producer":"user-stories","required":false,"structureHash":"sha256:fd736fabbaa7efedeb4b787f8ba670619c4a224a45131d8e95295fbe379e77a5"},{"artifact":"team-practices","contentHash":"sha256:d812f20c0eb1835774671705cfb44b961be047f3954d06bb8069ecd6563930d3","instanceCount":1,"presentCount":1,"producer":"practices-discovery","required":false,"structureHash":"sha256:ada0b71d1c0d28b66dc9a0428cae0edcb51690b101f7a30a0debe6d2b5847346"},{"artifact":"user-flow","contentHash":"sha256:0b8eb22de7029adabe1195e3709e6d83a29703be3d7280673f57205a839a9a58","instanceCount":1,"presentCount":1,"producer":"rough-mockups","required":true,"structureHash":"sha256:598db52a267a29d569635ccfd83d0f4e8cdb18c135d456f3ed17c729c6c4eb84"},{"artifact":"wireframes","contentHash":"sha256:973eeca8fee887e003be06d6986e7bbf92919fa4001a571fec9bc920f8c7bf90","instanceCount":1,"presentCount":1,"producer":"rough-mockups","required":true,"structureHash":"sha256:c06775f24d96b87f5a3b5dc5b6d595ef69321b74e5892a1ad3eef0bf10c7795d"}],"outputs":[{"artifact":"accessibility-checklist","contentHash":"sha256:09e76cad629922101e3ba0f3b87d81df57ccdead3d65967c669b15d6551b7b01","instanceCount":1,"presentCount":1,"producer":"refined-mockups","required":true,"structureHash":"sha256:8db34c430a6c6e47afa6f7144a04b55748c8f11ba279aa0565805cc3cfcff2ac"},{"artifact":"design-system-mapping","contentHash":"sha256:e2ebf454abe3cf30449dd54ab424e9bce0f04ffba2a753a9b1471ebe2c2d3b94","instanceCount":1,"presentCount":1,"producer":"refined-mockups","required":true,"structureHash":"sha256:1ab0fba445ce16ff49a472536f9ee1dc0f2c0278e06d6410982fd941adaed931"},{"artifact":"interaction-spec","contentHash":"sha256:b82aeb2426108cd4401f77b94ccabfbf6f892156b456ec6c5322c5eef1b0f059","instanceCount":1,"presentCount":1,"producer":"refined-mockups","required":true,"structureHash":"sha256:e653b525d7cc1e2946dd7a636a135e20f1f42b534efa83f115b6819a419f2577"},{"artifact":"mockups","contentHash":"sha256:f7e191618e908f6effcf9a05ecde5ea35241dca42c42201fe6bc05243c732915","instanceCount":1,"presentCount":1,"producer":"refined-mockups","required":true,"structureHash":"sha256:48e8829b8b39e141b2581b41ce1a18684486dd4cbbc2723ecb71131ed5cf04dd"},{"artifact":"refined-mockups-questions","contentHash":"sha256:45b92aede7a100018d690442d34027fcc9d82b76726e4432000104e56bd138a1","instanceCount":1,"presentCount":1,"producer":"refined-mockups","required":true,"structureHash":"sha256:6b866eba3dfe6ca34df071fd52a3e017a61b5b880923b18550e54eff9b11aba7"}],"projectType":"greenfield","schema":3}
+**Details**: Stage Refined Mockups approved by gate
+**Tokens In**: 60
+**Tokens Out**: 23174
+**Cache Read**: 14798509
+**Cache Write**: 156285
+**Cost USD**: 4.07
+**By Model**: opus-5-5=3.76; sonnet-5-5=0.31
+**By Agent**: main=3.76; aidlc-product-lead-agent=0.31
+**Tokens By Model**: opus-5-5=52/19.5k/14.5M/57.8k; sonnet-5-5=8/3.7k/267.9k/98.5k
+**Tokens By Agent**: main=52/19.5k/14.5M/57.8k; aidlc-product-lead-agent=8/3.7k/267.9k/98.5k
+
+---
+
+## Stage Start
+**Timestamp**: 2026-11-26T14:50:50Z
+**Event**: STAGE_STARTED
+**Stage**: domain-design
+**Agent**: aidlc-architect-agent
+**Answer Mode**: guide (reused from intent-capture)
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T14:51:10Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/inception/domain-design/domain-design-questions.md
+**Context**: inception > domain-design > domain-design-questions.md
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T14:51:11Z
+**Event**: DECISION_RECORDED
+**Stage**: domain-design
+**Decision**: Q5
+**Options**: New Tenancy component,Inside IdentityAccess
+**Question Id**: f59f01bc
+**Question Type**: stage-question
+**Question Chat**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question Shows**: sha256:daff36168865617b15e58401bffa7b10137012e94a65448bc81c2f8cca1c22d8
+
+---
+
+## Artifact Reused
+**Timestamp**: 2026-11-26T14:51:11Z
+**Event**: ARTIFACT_REUSED
+**Stage**: domain-design
+**Decision**: modify
+**Artifacts**: components.md,decisions.md,traceability.json
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T14:51:54Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: picker
+**Picked**: ["[User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]"]
+**Message Id**: ab761978
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, f59f01bc
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/domain-design/domain-design-questions.md","entries":{"Q1":"fe8d1aebd9d98798","Q2":"03f593442d30da85","Q3":"a685befad3f230a8","Q4":"749097ccbd9baf4d","Consolidated Summary Confirmation":"80e2f5747f7644c8","Q5":"2fe73e3a90f098c4"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T14:51:55Z
+**Event**: QUESTION_REPLIED
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question**: [Architect] Where do organisations, operators and the support access log live? (Every component's data now belongs to one organisation; something must own the organisation itself: name, address, status, region, suspension)
+**Reply**: [User did not answer this question — they sent a message instead. Treat that message as their response; do not re-ask.]
+**Options**: ["New Tenancy component","Inside IdentityAccess"]
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T14:51:55Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: typed
+**Message Id**: 73ba9e4b
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, f59f01bc
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/domain-design/domain-design-questions.md","entries":{"Q1":"fe8d1aebd9d98798","Q2":"03f593442d30da85","Q3":"a685befad3f230a8","Q4":"749097ccbd9baf4d","Consolidated Summary Confirmation":"80e2f5747f7644c8","Q5":"2fe73e3a90f098c4"}}
+
+---

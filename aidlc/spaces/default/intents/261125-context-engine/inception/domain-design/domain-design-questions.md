@@ -54,4 +54,14 @@ Does this all look correct before I generate the artifact?
 - Looks correct
 - Request changes
 
-[Answer]: Looks correct
+[Answer]:
+
+## Q5. [Architect] Where do organisations, operators and support access live?
+
+New on 2026-11-26 with the hosted service (requirements FR14, NFR14; stories Group 7). Every component's data now belongs to one organisation, and something must own the organisation itself (its name, address, status and region), the operators who run the hosted service, the log of their support access, and suspension.
+
+A. A new building block, Tenancy, that owns organisations, operators and the support access log, and resolves "which organisation is this request for" from the organisation's address; every other component stamps its records with the organisation and the database's row-level security enforces the separation (Recommended: one clear owner for the organisation lifecycle, and identity stays about people within an organisation)
+B. Put organisations, operators and support access inside IdentityAccess
+X. Other (please specify)
+
+[Answer]:

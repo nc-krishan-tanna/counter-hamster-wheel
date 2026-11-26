@@ -1,0 +1,22 @@
+## Review
+
+**Verdict:** READY
+**Reviewer:** aidlc-product-lead-agent
+**Date:** 2026-11-26T14:49:15Z
+**Iteration:** 1
+**Verdict Dictated:** no
+
+### Findings
+
+| ID | Severity | Location | Finding | Required action | Status |
+|---|---|---|---|---|---|
+| R-01 | Major | aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md > S18. Operator console | S18 shows only the happy-path table. Every other screen has empty, loading and error states. S18 has none, and it does not say how a long list of organisations is searched or paged. The row layout is also unclear: "Open for support" sits on its own line under Bright Co, so it is not clear which organisation it acts on, or whether it is available for an Active organisation. | Add empty, loading and error states for S18. Say how the list is searched or paged. Show "Open for support" as a per-row action (or state that it acts on the selected row). | New |
+| R-02 | Major | aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md > S15 Sign in, "Wrong organisation?" line | A person who does not know their organisation address has no way in. The "Wrong organisation?" line has no target. No screen covers the bare service address, a "find my organisation" step, or what a visitor sees at an address that does not exist. Q6 makes the address the only way to choose an organisation, so this is the first thing Theo (US7.3, two client organisations) will hit. | Add the state for an unknown address and for the bare service address. Say where "Go to your organisation's own address" leads, for example an email-me-my-addresses step or a plain explanation. | New |
+| R-03 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md > S17 Support access, "Region" bullet, and S9 Privacy | The hosting region (US7.7, AC7.7.1) is mentioned only as a bullet under S17. It is not drawn on the Privacy tab, and S9 does not mention it. The accessibility checklist and interaction spec have no entry for it. | Show a "Hosting region" line in the Privacy tab mockup, add it to the S9 Privacy description, and note that it is read-only text. | New |
+| R-04 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md > S14 to S18 | The earlier changes added responsive rules for every screen. None of the five new screens states how it behaves on tablet or phone. The S14 form, the S17 table and the S18 table with five columns and row actions are the likeliest to break. | Add a one-line responsive rule to each of S14 to S18, for example stacked fields and tables that become row cards. | New |
+| R-05 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md > S14 Sign up and S16 Suspended | S14 shows no password field for the "email + password" route. It does not say whether the email is verified before the organisation is created. It also does not show the S16 treatment for a signed-in person's open page (what happens to unsaved editor drafts, which US6.1 and AC6.1.3 say are kept). | Say what the email route asks for and whether the email is verified. Add a line to S16 that drafts are kept when a session ends because of suspension. | New |
+| R-06 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/refined-mockups/mockups.md > S17 and S18 "Open for support" | Support access is granted once per organisation, with one reason, but the S17 log lists one row per opened item (AC7.5.1). It is not stated whether each item opened is logged separately or what the reason applies to. Opening a second item without a new reason could leave the log ambiguous. | State that every item the operator opens gets its own log row, and whether the original reason is reused or asked for again. | New |
+
+### Summary
+
+The new screens cover US7.2 to US7.7 and fit the app's accessibility conventions: status is shown as text, dialogs require a reason, and the support banner is announced. The self-hosted exclusions are stated on each screen. The two Major points are gaps rather than contradictions, and each has a clear fix: S18 lacks the states every other screen has, and the sign-in route has no way in for someone who does not know their organisation address. Neither stops engineering, so READY, with those two worth deciding before approval. The mockups also flag the operator sign-in and support-consent questions as open, which is appropriate.

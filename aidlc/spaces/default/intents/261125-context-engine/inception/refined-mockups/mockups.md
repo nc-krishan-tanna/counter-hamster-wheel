@@ -12,6 +12,7 @@ These mockups are mid-fidelity: real labels, real layout and every state, in ASC
 - **Responsive rules** are added for every screen (rough-mockups review R-02).
 - The 3D map is described as an alternative visual view, not as decorative (rough-mockups review R-03).
 - The search box is labelled **Search**. Asking happens in **Ask** (S6), in chat and through MCP (rough-mockups review R-04).
+- **Hosted service (2026-11-26):** added sign-up (S14), sign-in at the organisation's own address (S15), the suspended notice (S16), the support access log in Settings (S17) and the operator console (S18), from stories US7.2 to US7.5 and Q6. None of them appear on a self-hosted install (US7.6).
 
 ## App shell (all screens)
 
@@ -31,6 +32,7 @@ These mockups are mid-fidelity: real labels, real layout and every state, in ASC
 - **Navigation:** Map, List, My items, Reviews. Settings appears for Admins only (marked * above).
 - **Theme:** light and dark follow the device setting, and the sun/moon switch overrides it. (Q4)
 - **Narrow screens (below 768 px):** the navigation collapses into the [=] menu, and the home screen is List instead of Map. (stories US3.10)
+- **Organisation (hosted service):** the app runs at the organisation's own address (for example `acme.` followed by the service's address), and the account menu shows the organisation's name. There is no organisation switcher: an account belongs to one organisation (US7.3, Q6).
 
 ---
 
@@ -361,6 +363,7 @@ These mockups are mid-fidelity: real labels, real layout and every state, in ASC
 ```
 
 - **Skipping:** any step can be skipped. Skipping the connection step leads to the map's empty state.
+- **Two ways in:** on a self-hosted install it starts on first launch and step 1 creates the first Admin. On the hosted service it starts right after sign-up (S14), and step 1 is already done because the Admin was created at sign-up (US7.2, US7.6).
 
 ---
 
@@ -380,7 +383,101 @@ These mockups are mid-fidelity: real labels, real layout and every state, in ASC
 +------------------------------------------------------------------------+
 ```
 
+---
+
+## S14. Sign up (hosted service only) — US7.2
+
+```
++------------------------------------------------------------------------+
+| Create your organisation                                               |
+|  Organisation name   [ Acme Ltd                         ]              |
+|  Your address        [ acme      ] .<service address>   Available      |
+|  Your name           [ Alex Morgan                      ]              |
+|  Sign up with        [ Google ]  [ Microsoft ]  or  email + password   |
+|                                              [Create organisation]     |
++------------------------------------------------------------------------+
+```
+
+- **Address:** suggested from the name, lower case letters, digits and hyphens. Availability is checked as the person types and shown in text ("Available" or "Taken, try acme-ltd").
+- **Errors:** an empty name or an invalid or taken address is named under its field, and everything typed is kept (US7.2).
+- **After:** the organisation is created, the person is its Admin, and first-run setup (S12) opens at the new address.
+- **Self-hosted:** this screen does not exist (US7.6).
+
+---
+
+## S15. Sign in to your organisation — US7.3, US6.1, US6.2
+
+```
++------------------------------------------------------------------------+
+| acme.<service address>                                                 |
+|  Sign in to Acme Ltd                                                   |
+|   [ Continue with Google ]                                             |
+|   [ Continue with Microsoft ]                                          |
+|   Email [                ]  Password [          ]  [Sign in]           |
+|  Wrong organisation? Go to your organisation's own address.            |
++------------------------------------------------------------------------+
+```
+
+- **Which organisation:** the address decides it; the page names the organisation in its heading (Q6).
+- **No account here:** "There is no account for this email in Acme Ltd. Ask an Admin of Acme Ltd to invite you." It never says whether the email exists in another organisation.
+- **Self-hosted:** the same screen without "Wrong organisation?".
+
+---
+
+## S16. Organisation suspended — US7.4
+
+```
++------------------------------------------------------------------------+
+| Acme Ltd is suspended                                                  |
+|  Nobody in this organisation can sign in at the moment.                |
+|  Your knowledge is kept and unchanged. Contact the service team.       |
++------------------------------------------------------------------------+
+```
+
+- Shown instead of the sign-in page, and to anyone already signed in on their next request. MCP calls get the error "organisation suspended" in text.
+
+---
+
+## S17. Settings > Support access (Admin, hosted service only) — US7.5
+
+```
++------------------------------------------------------------------------+
+| Settings: Connections | People and roles | Privacy | AI model | Brand  |
+|           | Support access                                             |
++------------------------------------------------------------------------+
+| Support access log                                                     |
+|  When              Operator   Opened                 Reason            |
+|  26 Nov 14:02      Olu        Item "Discount limit"  Ticket 482: wrong |
+|                                                      owner shown      |
++------------------------------------------------------------------------+
+```
+
+- **Read only:** entries cannot be edited or deleted by anyone (US7.5).
+- **Empty state:** "The service team has not opened any of your knowledge."
+- **Region:** the Privacy tab names the hosting region where the organisation's data and backups are kept (US7.7).
+
+---
+
+## S18. Operator console (hosted service only) — US7.4, US7.5
+
+```
++------------------------------------------------------------------------+
+| Operator console                                  Signed in: Olu       |
++------------------------------------------------------------------------+
+|  Organisation  Address      People  Items   Storage  Status            |
+|  Acme Ltd      acme         42      1,310   1.2 GB   Active  [Suspend] |
+|  Bright Co     brightco     8       95      40 MB    SUSPENDED [Reactivate]
+|                                                   [Open for support]   |
++------------------------------------------------------------------------+
+```
+
+- **Separate place:** the console has its own address and its own operator accounts; customer accounts cannot reach it (US7.4).
+- **Suspend and Reactivate:** ask for a reason in a confirmation dialog naming the organisation.
+- **Open for support:** asks for a reason first, then opens the organisation's knowledge read-only with a banner "Support access: recorded and visible to Acme Ltd's Admins" (US7.5).
+- **Self-hosted:** the console does not exist (US7.6).
+
 ## Assumptions & Open Questions
 
 - The rules for several owners on one proposal (every owner must approve, and any rejection rejects the whole proposal) close stories review R-04. Confirm them at the gate if you prefer another rule.
 - Sample content (amounts, names, dates) is illustrative only.
+- How an operator signs in to the console (S18), and whether support access needs the Admin's consent first, are open in the requirements (Open questions). The screens assume a separate operator sign-in and logging only.

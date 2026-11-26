@@ -197,6 +197,34 @@ Inputs: `mockups.md`, `ideation/rough-mockups/wireframes.md` (wireframes), `idea
 - **Variants:** stale (adds a note), no match (offers to raise a gap), unknown user (asks them to get invited), engine unavailable ("I can't answer right now").
 - **Accessibility:** answers are plain text that each host's own accessibility handles.
 
+---
+
+## OrganisationSignUp (hosted service)
+
+| Field | Value |
+|---|---|
+| Component | OrganisationSignUp |
+| Description | Creates an organisation, its address and its first Admin (S14, US7.2) |
+| Category | input |
+
+| State | Description | Trigger |
+|---|---|---|
+| default | Empty form | page load |
+| checking | Address availability being checked | address typed (debounced 300 ms) |
+| available / taken | Result shown in text next to the address | check returns |
+| error | Field errors named under each field; input kept | submit with invalid input |
+| loading | Creating the organisation; button disabled | submit |
+
+- **Accessibility:** the availability result is in a polite live region; errors are linked to their fields with `aria-describedby`; focus moves to the first error on submit.
+
+---
+
+## OperatorConsole and SupportAccessLog (hosted service)
+
+- **OperatorConsole (S18):** a table of organisations with Status as text. Suspend, Reactivate and Open for support each open an Alert Dialog that names the organisation and requires a reason; confirm is disabled until a reason is typed. Support access opens the organisation read-only with a persistent banner.
+- **SupportAccessLog (S17):** a read-only table, newest first, cursor-paged. No edit or delete controls exist.
+- **Accessibility:** tables have row and column headers; dialogs follow the global dialog rules; the support banner is announced once when the organisation opens.
+
 ## Assumptions & Open Questions
 
 - AskConversation drafts are kept per person for 7 days if not submitted. This is a default, changeable in settings.
