@@ -9,6 +9,7 @@ Input: `inception/requirements-analysis/requirements.md` (roles FR11.3, day-one 
 | P3 | Theo, Technical contributor | Contributor (sometimes owner) | 2 |
 | P4 | Alex, Admin | Admin | 2 |
 | P5 | The AI agent | Service account (Contributor) used by ChatGPT, Claude or another agent through MCP | 2 |
+| P6 | Olu, Operator | A member of the team running the hosted service; outside every customer organisation | 3 |
 
 ## P1 Sam, Business contributor
 
@@ -45,7 +46,16 @@ Input: `inception/requirements-analysis/requirements.md` (roles FR11.3, day-one 
 - **Constraints:** acts under an account and role; can read and propose, never change knowledge directly.
 - **Uses:** MCP.
 
+## P6 Olu, Operator
+
+- **Who:** one of the team that runs the hosted service (added 2026-11-26 with FR14).
+- **Goals:** keep the hosted service healthy; let organisations join and leave; help a customer when asked.
+- **Constraints:** belongs to no customer organisation; every look at an organisation's knowledge is recorded and visible to its Admins (FR14.5).
+- **Tech comfort:** high.
+- **Uses:** the operator console.
+
 ## Relationships
 
 - Sam and Theo (and the AI agent) raise proposals; Priya approves those for items she owns; Alex sets up and can override an owner with a recorded reason.
 - Unowned items fall to Approvers and Admins.
+- On the hosted service every persona except Olu belongs to exactly one organisation; Olu manages organisations from outside them.

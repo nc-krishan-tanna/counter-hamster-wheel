@@ -13,3 +13,4 @@ Input: `inception/requirements-analysis/requirements.md` and `inception/practice
   - The propose-and-approve journey, including the accountability edge cases the requirements review flagged.
   - Capture from connected tools.
   - Making the 3D map and its accessible list view usable by non-technical people.
+  - Since 2026-11-26, the hosted multi-organisation service (Group 7): separation between organisations is a promise every story's data must keep, so it gets its own testable criteria.

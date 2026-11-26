@@ -124,6 +124,14 @@ X. Other (please specify)
 - Staleness: each item sets its own review period; its owner is reminded when it passes (Q7)
 - Raw content from connected tools: kept in full by default, visible only to Admins; organisations can change this (Q8)
 - Workflows on proposals: every proposed change gets a risk and blast-radius assessment showing what else it affects before it is approved (Q6, Q10)
+- Hosting: open source and self-hosted from containers, and also a hosted service run by the team for many organisations (Q11 context)
+- Isolation: one shared database; every record carries its organisation and PostgreSQL row-level security refuses cross-organisation access (Q11)
+- One product: same code and images; a self-hosted install runs with one organisation; hosted-only features are switched on for the hosted service (Q12)
+- Joining: self-service sign-up creates an organisation and makes the person its Admin (Q13)
+- Accounts: an account belongs to exactly one organisation; the same person needs a separate account in each (Q14)
+- Data location: one hosting region for every hosted organisation, stated publicly (Q15)
+- Payment: none in the product; operators can turn organisations on and off (Q16)
+- Operator access: operators may read an organisation's knowledge for support; every access is logged and visible to that organisation's Admins (Q17)
 
 Does this all look correct before I generate the artifact?
 
@@ -131,3 +139,65 @@ Does this all look correct before I generate the artifact?
 - Request changes
 
 [Answer]: Looks correct
+
+## Q11. [Product owner] How are hosted organisations kept apart?
+
+New on 2026-11-26 (U1 infrastructure design, Q1 and Q2): besides self-hosting, the team will run a hosted service shared by many organisations, and you chose to build true multi-tenancy now. This replaces "one organisation per installation" (FR13.1) and removes "one shared hosted service for many organisations" from out of scope. How organisations are separated decides how much every later design changes.
+
+A. One shared database; every record carries its organisation, and PostgreSQL row-level security refuses any query that crosses organisations, even if the code forgets a filter (Recommended: one copy to run and upgrade, and the database itself blocks leaks)
+B. One database with a separate schema per organisation
+C. A separate database per organisation behind one running application
+X. Other (please specify)
+
+[Answer]: A
+
+## Q12. [Product owner] Do self-hosted installs and the hosted service run the same product?
+
+A. Yes: one codebase and the same container images; a self-hosted install simply runs with one organisation, and multi-organisation features (creating organisations, the operator console) are switched on only for the hosted service (Recommended: one product to test and release)
+B. Two editions built from the same code with different features
+X. Other (please specify)
+
+[Answer]: A
+
+## Q13. [Product owner] How does a new organisation join the hosted service?
+
+A. The team creates each organisation from an operator console and invites its first Admin; self-service sign-up comes later (Recommended: smallest first version, and the team stays in control of who joins)
+B. Self-service sign-up: anyone creates an organisation and becomes its Admin
+C. Both from the start
+X. Other (please specify)
+
+[Answer]: B
+
+## Q14. [Product owner] Can one person belong to more than one organisation?
+
+For example a consultant who works with two client organisations, signing in with the same Google account.
+
+A. Yes: one account can belong to several organisations, with a role in each, and the person switches between them (Recommended: the sign-in library already supports organisations this way, and the same email in two organisations is common)
+B. No: an account belongs to exactly one organisation; the same person needs a separate account for each
+X. Other (please specify)
+
+[Answer]: B
+
+## Q15. [Compliance specialist] Where is hosted data kept?
+
+A. One hosting region for every hosted organisation, stated publicly; an organisation that needs another region self-hosts (Recommended: one copy to run; self-hosting covers other needs)
+B. Each organisation chooses its region from a short list
+X. Other (please specify)
+
+[Answer]: A
+
+## Q16. [Product owner] Does the first version handle payment for the hosted service?
+
+A. No: contracts and invoices are handled outside the product; the operator console only turns organisations on and off (Recommended: no billing system to build or secure yet)
+B. Yes: plans, limits and card payment through a payment provider inside the product
+X. Other (please specify)
+
+[Answer]: A
+
+## Q17. [Compliance specialist] Can the team running the hosted service read an organisation's knowledge?
+
+A. No: operators manage organisations (create, suspend, see usage) but cannot read any organisation's items, proposals or sources; support needs the organisation's Admin to share what is needed (Recommended: the strongest privacy promise for a shared service)
+B. Yes, for support, with every access logged and visible to the organisation's Admins
+X. Other (please specify)
+
+[Answer]: B

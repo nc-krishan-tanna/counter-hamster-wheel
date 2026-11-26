@@ -56,6 +56,7 @@ X. Other (please specify)
 - Grouping: by user journey, covering capture, propose and approve, explore the map, ask, keep it fresh, and set up and administer (Q2)
 - Size: small stories, 1 to 3 days each for one person with AI assistance (Q3)
 - Accountability defaults covered by stories: owners approve their own items whatever their role; self-approval allowed but flagged in history; Admins can override an owner with a recorded reason; a departed owner's items become unowned and go to Approvers; Slack and Teams users matched to accounts by work email, unmatched users get nothing; items are archived through a proposal, not deleted (Q4)
+- Hosted service (from the updated requirements FR14, NFR14, NFR15, 2026-11-26): a sixth persona, Olu the Operator, outside every organisation; a seventh group, "Organisations and the hosted service", with stories for keeping organisations apart, sign-up, signing in to one organisation, suspend and reactivate, logged support access, self-hosted as one organisation, and the hosting region; separation, sign-up, sign-in, suspension and self-hosting are Must, support access and the region notice are Should
 
 Does this all look correct before I generate the artifact?
 

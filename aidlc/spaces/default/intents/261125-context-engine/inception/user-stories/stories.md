@@ -344,12 +344,61 @@ As Theo, I want to run the engine from published container images, so that any o
 - **AC6.8.2** Given 100 people's typical load, when the engine runs on one host, then the NFR targets are met.
 - **AC6.8.3** Given a second copy of the web and API service, when it is started alongside, then both serve requests without code changes.
 
+---
+
+## Group 7: Organisations and the hosted service
+
+Added 2026-11-26 for the hosted multi-organisation service (FR14, NFR14, NFR15 in `inception/requirements-analysis/requirements.md`). On a self-hosted install only US7.1, US7.3 and US7.6 apply.
+
+### US7.1 Keep organisations apart
+As Alex, I want our organisation's knowledge to be invisible to every other organisation on the hosted service, so that we can trust it with our internal rules. **Must.** Traces: FR14.1, NFR14.
+- **AC7.1.1** Given organisations A and B, when Sam in A searches, reads, asks or lists proposals, then nothing from B appears.
+- **AC7.1.2** Given an item id that belongs to B, when Sam in A requests it through the web app, the API or MCP, then the answer is "not found".
+- **AC7.1.3** Given A's AI agent token, when it calls any MCP tool, then it can reach only A's knowledge.
+- **AC7.1.4** Given background work running for A (sync, extraction, reminders), when it reads or writes, then it touches only A's data.
+
+### US7.2 Sign up a new organisation
+As Alex, I want to sign up on the hosted service and create our organisation, so that we can start without installing anything. **Must.** Traces: FR14.3, FR13.2.
+- **AC7.2.1** Given a visitor on the hosted service, when they sign up with a new organisation name, then the organisation exists, they are its Admin, and first-run setup starts.
+- **AC7.2.2** Given the organisation address they chose is already taken, when they submit, then they are asked for another and nothing is created.
+- **AC7.2.3** Given a self-hosted install, when anyone opens it, then there is no sign-up page.
+
+### US7.3 Sign in to my organisation
+As Theo, who works with two client organisations, I want to sign in to each with its own account, so that I only ever see one organisation at a time. **Must.** Traces: FR14.2, FR11.6.
+- **AC7.3.1** Given Theo has accounts in A and B with the same email, when he signs in to A, then he sees only A and holds only his A role.
+- **AC7.3.2** Given Theo is an Admin in A and a Reader in B, when he signs in to B, then he cannot propose there.
+- **AC7.3.3** Given an email with no account in A, when it tries to sign in to A, then access is refused.
+
+### US7.4 Suspend and reactivate an organisation
+As Olu, I want to suspend an organisation and reactivate it later, so that the team can stop access without losing anything. **Must.** Traces: FR14.4.
+- **AC7.4.1** Given Olu suspends A, when someone in A signs in or A's agent calls MCP, then they are refused with a message that the organisation is suspended.
+- **AC7.4.2** Given A is reactivated, when its people sign in, then all its knowledge, history and settings are unchanged.
+- **AC7.4.3** Given the operator console, when Olu opens it, then each organisation shows its people, items and storage used.
+
+### US7.5 Open an organisation's knowledge for support
+As Olu, I want to open an organisation's knowledge when they need help, with my access recorded, so that I can support them while they can see exactly what I looked at. **Should.** Traces: FR14.5.
+- **AC7.5.1** Given Olu opens an item in A and gives a reason, when A's Admin views the support access log, then it lists Olu, the time, the item and the reason.
+- **AC7.5.2** Given Olu gives no reason, when he tries to open A's knowledge, then access is refused.
+- **AC7.5.3** Given a support access entry, when anyone tries to change or delete it, then it cannot be done.
+
+### US7.6 A self-hosted install runs one organisation
+As Theo, I want our own copy to run as a single organisation with nothing hosted-only switched on, so that self-hosting stays simple. **Must.** Traces: FR14.6, FR13.1.
+- **AC7.6.1** Given a new self-hosted install, when it starts, then it has exactly one organisation and first-run setup creates its first Admin.
+- **AC7.6.2** Given a self-hosted install, when anyone looks for sign-up or the operator console, then neither exists.
+- **AC7.6.3** Given the same published images, when they run as the hosted service, then sign-up and the operator console are available.
+
+### US7.7 Know where our hosted data is kept
+As Alex, I want to know which region our hosted data and its backups are kept in, so that I can tell our compliance team. **Should.** Traces: NFR15.
+- **AC7.7.1** Given the hosted service, when Alex opens organisation settings, then the hosting region is named.
+- **AC7.7.2** Given backups of A's data, when they are made, then they are stored in the same region.
+
 ## Dependencies (build order only)
 
 - US2.1 and US2.4 come before the other Group 2 stories.
 - Group 1 extraction (US1.6) needs at least one source (US1.5 is the simplest).
 - US4.2 to US4.6 need US4.1's search.
 - US6.1 to US6.3 come before anything role-dependent in real use (tests use seeded accounts).
+- US7.1 (organisation separation) shapes every stored record, so it comes first among all stories that store data; US7.2 and US7.3 come with US6.1 and US6.2.
 
 ## Coverage notes
 
