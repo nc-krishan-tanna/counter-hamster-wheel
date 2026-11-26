@@ -1,6 +1,6 @@
 # Units of Work
 
-Inputs: `inception/domain-design/components.md` (components), `inception/domain-design/decisions.md` (decisions), `inception/requirements-analysis/requirements.md` (requirements), `inception/user-stories/stories.md` (stories), `inception/refined-mockups/mockups.md` (mockups) and `interaction-spec.md`, plus `units-generation-questions.md` (Q1 to Q5, plan approved).
+Inputs: `inception/domain-design/components.md` (components), `inception/domain-design/decisions.md` (decisions), `inception/requirements-analysis/requirements.md` (requirements), `inception/user-stories/stories.md` (stories), `inception/refined-mockups/mockups.md` (mockups) and `interaction-spec.md`, plus `units-generation-questions.md` (Q1 to Q7, plan approved).
 
 Shape:
 - Mostly one unit per building block. Each tool connection and each big web area is its own unit (Q1).
@@ -24,7 +24,7 @@ U1 creates the first versions of `api`, `worker` (empty), `web` and the containe
 | Unit ID | Directory | Kind | Size | Deployment | Building blocks (components.md) |
 |---|---|---|---|---|---|
 | U1 | u1-walking-skeleton | service | L | shared (api, web) | Thin slices of KnowledgeGraph, ProposalWorkflow, MCPServer, IdentityAccess (seeded), WebApp |
-| U2 | u2-identity-admin | service | M | shared (api) | IdentityAccess, OrgSettings |
+| U2 | u2-identity-admin | service | L | shared (api) | IdentityAccess, OrgSettings, Tenancy |
 | U3 | u3-knowledge-graph | service | M | shared (api) | KnowledgeGraph |
 | U4 | u4-ai-gateway | library | S | embedded (api, worker) | AIGateway |
 | U5 | u5-impact-assessment | library | M | embedded (api) | ImpactAssessment |
@@ -56,20 +56,22 @@ U1 creates the first versions of `api`, `worker` (empty), `web` and the containe
 - Provides a basic web page to write an item, approve it and read it.
 - Provides an MCP tool to read items.
 - Uses a seeded sign-in (two accounts: a contributor and an owner).
+- Keeps organisations apart from the first table (Q7, ADR-009): seeds two organisations, stamps every U1 table with the organisation, and switches on PostgreSQL row-level security.
 
 **Builds (screens):** a basic item page and a basic approve view. Later web units replace both.
 
-**Notes:** End-to-end check: start the containers, create an item, approve it as its owner, then read it in the page and through MCP. Later units deepen each part. The skeleton's code is extended, not thrown away.
+**Notes:** End-to-end check: start the containers, create an item, approve it as its owner, then read it in the page and through MCP; then prove that the second seeded organisation cannot see that item through the page or MCP. Later units deepen each part. The skeleton's code is extended, not thrown away.
 
-### U2 u2-identity-admin (service, M)
+### U2 u2-identity-admin (service, L)
 **Responsibilities:**
-- Sign-in through an established authentication library: Google and Microsoft single sign-on, plus email and password.
+- Sign-in through an established authentication library: Google and Microsoft single sign-on, plus email and password, at the organisation's own address; one account per organisation.
 - Users, the four roles, service accounts and permission checks.
-- Chat-identity matching by work email.
+- Chat-identity matching by work email; linking each Slack or Teams workspace to one organisation.
 - User-deactivated events.
 - OrgSettings: privacy and security presets, sensitive-content policy, default review period, branding with a contrast check, and change history.
+- Tenancy (Q6, ADR-009): organisations, their addresses and hosting region; finding the organisation for each request; sign-up on the hosted service; suspension and reactivation with recorded reasons; operator accounts; the support access log. Extends U1's organisation stamp and row-level security to the whole product, and owns the automated isolation tests every later unit adds to (NFR14).
 
-**Notes:** No custom password storage, per the project rule to use proven libraries.
+**Notes:** No custom password storage, per the project rule to use proven libraries. Grew from M to L when Tenancy was added (Q6). On a self-hosted install, sign-up and operators are switched off.
 
 ### U3 u3-knowledge-graph (service, M)
 **Responsibilities:**
@@ -198,6 +200,7 @@ Extends the U1 read tool.
 - S11 Notification settings.
 - S12 First-run setup.
 - Sign-in screens.
+- Hosted service: S14 Sign up, S15 Sign in at the organisation's address, S16 Organisation suspended, S17 Support access log, S18 Operator console (Q6).
 - Narrow-screen layouts for these screens.
 
 ### U20 u20-release-packaging (packaging, M)
