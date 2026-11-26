@@ -1,0 +1,115 @@
+---
+id: traceability
+kind: deterministic
+command: aidlc engine sensor-traceability
+default_severity: advisory
+fire_on: gate
+description: Verifies element-level upstream coverage, downstream targets, and derived orphans in traceability.json
+category: document-traceability
+matches: "**/traceability.json"
+input_schema:
+  output_path: string
+  stage_slug: string
+output_schema:
+  pass: boolean
+  gaps: string[]
+  orphans: string[]
+  missing_from_table: string[]
+  missing_from_upstream_ids: string[]
+  invalid_entries: string[]
+  invalid_targets: string[]
+  findings_count: integer
+  reason: string
+timeout_seconds: 300
+---
+
+# traceability sensor
+
+Deterministic element-level verification of each stage's JSON coverage table,
+run when the stage's documents are handed on (its review request, or the report
+that opens its gate when no review took them first) and again when its gate
+opens, on the tables as they are then:
+
+1. Validates the runtime JSON shape and the closed status set.
+2. Fails on `GAP`, `ORPHAN`, missing coverage rows, or undeclared upstream IDs.
+   A requirement whose sub-requirements are upstream too (`FR1` beside
+   `FR1.1`) is traced through them and needs no row of its own.
+3. Requires non-empty targets for `OK`, `Deferred`, and `N/A`; for `Deferred`
+   and `N/A` the target is the reason.
+4. Resolves upstream IDs from the authored artifacts and fails closed when the
+   expected source is missing or yields no IDs. FR and NFR IDs come from the
+   `ids` Requirements Analysis records in its own traceability.json, spelled as
+   requirements.md spells them (each with its `kind`, a sub-requirement `of` its
+   requirement); without that record, a table's requirements are the ones it
+   lists and the ones the FR and NFR ID patterns find in requirements.md.
+5. Verifies deterministic targets where possible: stories, Unit mappings,
+   business rules, and workspace-relative code paths. At Units Generation, a
+   story or requirement no Unit's row names is a gap, unless the team keeps it
+   out of every Unit on purpose: a `Deferred` row with a non-empty target (the
+   reason, and where it is handled, say Operation) settles it, with `none` in
+   its story-map Units cell. An `N/A` row does not, since it is also how an ID
+   is handed to another Unit. At Functional Design and Code Generation, an `N/A`
+   row for an acceptance criterion (or an FR when there are no stories) whose
+   target is another Unit of the plan, named on its own by directory or `U{n}`
+   ID, is a hand-off (a reason's words are never read); that Unit must be on
+   that story's (or FR's) row in `unit-of-work-story-map.md`, or it is reported
+   as an invalid target. With stories, a story whose row names only `library`,
+   `spec` or `packaging` Units says how it is reached (`existing: <where>` or
+   `interface`, in the `Reached through` column of its row or once as a
+   `Reached through:` line), or it is reported as an invalid target. A
+   Functional Design Unit
+   whose kind writes no `rules.md` (a `ui` Unit) names one of its design files
+   (`functional-spec.md`, `frontend-components.md`) on each row instead of a
+   business rule. At Units Generation, with stories, once a Unit is finished
+   (its row in the Unit Progress table of `aidlc-state.md` has every stage cell
+   and the gate cell `[x]`, and its `merged` cell too where the table has one),
+   a story whose row names only finished Units must have every acceptance
+   criterion built or settled, as Build and Test's coverage below reads it. A
+   finished Unit is not worked again, so a criterion nobody built or settled
+   would never be built; each such story is reported as an invalid target. A
+   story with a Unit that is not finished on its row is not.
+6. Derives functional-design orphans from `rules.md` rather than
+   trusting only the self-reported `reverse` array.
+
+A later stage starts its table with the same tool, `--stage <slug> --output-path
+<its traceability.json> --write-upstream`: it adds every upstream ID this check
+asks for to `upstream_ids`, each with a `GAP` row, keeps what the table already
+holds, and writes nothing when nothing is missing.
+
+Build and Test's coverage gate runs the same tool with `--stage build-and-test`
+and no output path. It reads every Code Generation table and prints each
+requirement and acceptance criterion as built or not: a requirement with
+sub-requirements is built when each Unit has built its own, a row for the
+parent alone not covering them; otherwise by its own row or, when User Stories
+ran, through the criteria of the stories User Stories traced it to. One that
+nothing builds is settled when the latest stage that traced it (User Stories,
+NFR Requirements, then Code Generation) marked it `N/A` with its reason in
+every table there that lists it; an `N/A` with no reason is not settled. A
+story Units Generation kept out of every Unit, `Deferred` with its reason,
+settles its criteria the same way (a requirement, in work without stories),
+unless a later stage's table lists them. A Code Generation `N/A` that hands the
+ID to another Unit settles nothing: if no Unit built it, it is uncovered and its
+row lists the hand-offs as `handed_off` (`<Unit>/code-generation: <target>`).
+
+## Expected JSON schema
+
+```json
+{
+  "stage": "functional-design",
+  "unit": "u1-auth",
+  "upstream_ids": ["AC1.1.1", "AC1.2.1"],
+  "coverage": [
+    { "id": "AC1.1.1", "status": "OK", "target": "BR1.1" },
+    { "id": "AC1.2.1", "status": "GAP" }
+  ],
+  "reverse": [
+    { "id": "BR1.3", "status": "ORPHAN" },
+    { "id": "BR1.4", "status": "N/A", "target": "technical validation rule" }
+  ]
+}
+```
+
+Valid statuses are `OK`, `GAP`, `ORPHAN`, `Deferred`, and `N/A`. Every
+upstream ID goes in `upstream_ids` and `coverage`, `N/A` there when it does
+not apply; `reverse` lists only what the stage produced that traces to nothing
+upstream.

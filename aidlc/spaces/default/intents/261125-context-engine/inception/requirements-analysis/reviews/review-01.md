@@ -1,0 +1,24 @@
+## Review
+
+**Verdict:** NOT-READY
+**Reviewer:** aidlc-product-lead-agent
+**Date:** 2026-11-25T16:08:41Z
+**Iteration:** 1
+**Verdict Dictated:** no
+
+### Findings
+
+| ID | Severity | Location | Finding | Required action | Status |
+|---|---|---|---|---|---|
+| R-01 | Major | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > FR3.3, FR11.3, FR11.4 | An owner approves changes to their items (FR3.3), and a Contributor may be an owner (FR11.4). The role table gives only Approver and Admin the ability to approve, and then only for unowned items. A Contributor-owner therefore cannot approve anything, and items they own stall. The acceptance criterion also does not say whether an Admin may approve an item that has an owner. | State exactly who can approve an owned item. Either give the owner approval rights for their own items whatever their role, or restrict owners to Approver and Admin. State whether Admin can override an owner, and add Given/When/Then criteria for each case. | New |
+| R-02 | Major | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > FR3.3, FR3.1, FR2.1 | Accountability is the core promise, but nothing covers an owner approving their own proposal, an owner who is deactivated or has left, or two approvers deciding the same proposal at once. | Add requirements and testable criteria for each case. Decide whether self-approval is allowed and whether it is flagged in history. Say what happens to items and pending proposals when an owner is removed. Say what happens when two decisions arrive together. | New |
+| R-03 | Major | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > FR8, FR11.5, FR7.4 | Role checks must apply to Slack and Teams (FR11.5), but nothing says how a chat user is mapped to an engine account and role. An unmapped user could read knowledge above their role. | Add a requirement for mapping chat identities to accounts. Say what an unmapped user gets, and what a Reader or an unmapped user gets for items they may not see. Add acceptance criteria. | New |
+| R-04 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > FR3.1, FR1 | Every change goes through a proposal, but there is no way to delete or archive an item, and no way for a proposer to withdraw a proposal. Link removal is not mentioned either. | Add requirements for delete or archive, withdraw and link removal. Say how they interact with history, or mark them out of scope. | New |
+| R-05 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > FR4.2, FR4.3, Open questions | The risk level rules are deferred, and contradiction detection has no measurable bar. A QA person cannot tell a correct flag from a miss. Q6 and Q10 also raised per-area workflows (extra approvals, post-approval actions). Neither the Out of scope list nor the assumptions records that these are deferred. | Add a minimum rule set for the risk level, for example High when the item type is a business rule and more than N items are affected. Define a pass bar for contradiction flags using a fixture set. List per-area approval steps and post-approval actions under Out of scope or as an explicit deferral. | New |
+| R-06 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > NFR9, FR12.1, FR12.2 | History that no role can edit or delete conflicts with the privacy laws an Admin can enable, such as erasure rights, and with raw content retention. | State how erasure or redaction requests are handled, or declare them out of scope for the MVP with the reason. | New |
+| R-07 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/requirements.md > FR9.8, NFR2, FR10.2 | "Clean and neutral" has no pass/fail test. NFR2 does not say whether the 5-second target includes AI answer generation. The reminder channel for stale items is unspecified. | Drop FR9.8, or tie it to a design-system check. Define what NFR2 measures, for example MCP search with and without AI. Name the reminder channel, for example in-app or email. | New |
+| R-08 | Minor | aidlc/spaces/default/intents/261125-context-engine/inception/requirements-analysis/traceability.json | Checked: the ids list matches every FR, FR sub-item and NFR in requirements.md. No gap found. | None. | New |
+
+### Summary
+
+The requirements are broad and well traced to the Q&A, and the traceability list is complete. The approval and role model has an internal contradiction (Contributor-owners cannot approve), and two accountability corners are missing: owner self-approval or departure, and chat-user identity mapping. Settle these before engineering starts. The remaining findings are Minor.
