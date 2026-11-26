@@ -10,7 +10,7 @@ C. A TypeScript-only typed RPC (for example tRPC)
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q2. [Architect] Should that backend API also be a documented public API for other tools?
 
@@ -21,7 +21,7 @@ B. No: internal only; MCP is the only outside interface
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q3. [Architect] How should API changes be versioned?
 
@@ -30,7 +30,7 @@ B. No versioning in the first version
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q4. [Architect] How should background work (content changes, extraction jobs, notifications) be passed around?
 
@@ -39,7 +39,7 @@ B. A separate message broker service
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A. Durable job queue in the main database, behind a swappable job interface (enqueue, take, complete, retry) so a broker can replace it later without changing the rest; plus a dead-letter queue for jobs that exhaust their retries (payload, error and attempt count kept; alert when above zero; admin can retry or discard; time-limited retention). AI model outages pause and retry without using up a job's attempts; only jobs that are themselves bad are dead-lettered.
 
 ## Q5. [Architect] How should errors, timeouts and retries work across boundaries?
 
@@ -48,4 +48,19 @@ B. Decide per contract later
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
+
+## Consolidated Summary Confirmation
+
+Does this all look correct before I generate the artifact?
+
+- Q1: the web app, chat bot and worker talk to the main backend over REST/HTTP with JSON, described by an OpenAPI spec.
+- Q2: the same REST API is public, documented and versioned for other tools; MCP sits beside it for AI agents.
+- Q3: a major version in the path (`/v1`); only additive changes within a version; a breaking change needs a new version, and the old one is kept for at least one release.
+- Q4: background work goes through a durable job queue in the main database, behind a swappable job interface (enqueue, take, complete, retry) so a broker can replace it later; a dead-letter queue holds jobs that exhaust their retries (payload, error and attempt count kept, alert when above zero, admin can retry or discard, time-limited retention); AI model outages pause and retry without using up a job's attempts.
+- Q5: one error format (RFC 9457 problem details); 10-second timeouts for API calls and 30 seconds for AI calls; up to 3 retries with backoff, only for safe-to-repeat calls; creating a proposal takes an idempotency key.
+
+- Looks correct
+- Request changes
+
+[Answer]: Looks correct
