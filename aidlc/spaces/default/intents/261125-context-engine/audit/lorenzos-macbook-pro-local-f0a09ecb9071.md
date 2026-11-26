@@ -10090,3 +10090,452 @@
 **Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/delivery-planning/delivery-planning-questions.md","entries":{"Q1":"78899e48017d45d1","Q2":"2cccf53463cb2d5c","Q3":"a14dbd311869e358","Q4":"f21bc6b284663d80","Q5":"a11b30bd7584b3ee","Q6":"c667499b6ea7ad65","Q7":"fa2c2eb78397f3b9","Consolidated Summary Confirmation":"a19105f8612f9025","Q8":"31a83c15cd50a00a"}}
 
 ---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T15:24:06Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: ae7878a9d473713fe
+**Message**: merged
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T15:25:20Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: typed
+**Message Id**: a1952d66
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/inception/delivery-planning/delivery-planning-questions.md","entries":{"Q1":"78899e48017d45d1","Q2":"2cccf53463cb2d5c","Q3":"a14dbd311869e358","Q4":"f21bc6b284663d80","Q5":"a11b30bd7584b3ee","Q6":"c667499b6ea7ad65","Q7":"fa2c2eb78397f3b9","Consolidated Summary Confirmation":"a19105f8612f9025","Q8":"31a83c15cd50a00a"}}
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:25:48Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Unit Started
+**Timestamp**: 2026-11-26T15:25:49Z
+**Event**: UNIT_STARTED
+**Stage**: functional-design
+**Unit**: u1-walking-skeleton
+**Run floor**: STAGE_JUMPED:2026-11-26T14:25:31Z#1
+
+---
+
+## Artifact Reused
+**Timestamp**: 2026-11-26T15:25:50Z
+**Event**: ARTIFACT_REUSED
+**Stage**: functional-design
+**Decision**: modify
+**Artifacts**: entities.md,rules.md,functional-spec.md,traceability.json
+
+---
+
+## Decision Recorded
+**Timestamp**: 2026-11-26T15:25:52Z
+**Event**: DECISION_RECORDED
+**Stage**: functional-design
+**Decision**: Does this all look correct before I generate the artifact?
+**Options**: Looks correct,Request changes
+**Checkpoint**: Consolidated Summary Confirmation
+**Questions File**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Unit**: u1-walking-skeleton
+**Question Id**: 2e4c7ac4
+**Question Type**: summary-confirmation
+**Question Chat**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question Shows**: sha256:5f3e6fadf121ee62b593fa2b90c442f711ce515529fd33f364f980ead2a4e0bc
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T15:26:33Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: picker
+**Picked**: ["Looks correct"]
+**Message Id**: 317df0ce
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851, 2e4c7ac4
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md","entries":{"Q1":"e8ac2d25a622325e","Q2":"edec6828381734f0","Q3":"817ee76b13fb9011","Q4":"2bdd97c0a8464814","Q5":"853dac27e18dc0fd","Q6":"75177eeee52f4353","Q7":"34f0bf22ffefde5e","Q8":"9b65ee63037eb145","Q9":"37cdbc824c1339aa","Q10":"c69489947dfe909e","Q11":"50035406c8529bc4","Consolidated Summary Confirmation":"94906af0999e0abf"}}
+
+---
+
+## Question Replied
+**Timestamp**: 2026-11-26T15:26:33Z
+**Event**: QUESTION_REPLIED
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Question**: Unchanged: base item with seven starting types; proposals create, change, add and remove links; approve or reject with a reason; owners always a list of people, groups and agents, one human owner approval enough, self-approval flagged, agents never approve; out-of-date proposals refused; item page with history; system and manual sources; MCP read, search and propose; seeded contributor, owner, agent and group.\n\nNew (organisations):\n- Two organisations seeded, each at its own local address (e.g. acme.localhost and globex.localhost); the second has its own owner and agent\n- Every record belongs to one organisation; the organisation comes from the address and the credential, which must agree, otherwise "not found"; U1 owns the single place that sets it\n- Proposals, decisions, links, owners, groups, searches and idempotency keys never cross organisations\n- The end-to-end check adds: the second organisation cannot see, search, link to or decide on the first one's item, through the page or MCP\n\nDoes this all look correct before I generate the artifact?
+**Reply**: Looks correct
+**Options**: ["Looks correct","Request changes"]
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:26:41Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-design-questions.md
+**Summary Authorization Id**: bcab447f45563bb93f49937380567a1bd462f5591b4ec359844bf4e0bd95ab40
+
+---
+
+## Summary Confirmation Recorded
+**Timestamp**: 2026-11-26T15:26:42Z
+**Event**: SUMMARY_CONFIRMATION_RECORDED
+**Stage**: functional-design
+**Details**: Looks correct
+**Checkpoint**: Consolidated Summary Confirmation
+**Questions File**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-design-questions.md
+**Questions SHA-256**: 65dc2aa05178d018973e6bacb14ad585a8605bbecbd331af3d8e55bc0f7cadee
+**Hash Scope**: confirmed-content-v2
+**Unit**: u1-walking-skeleton
+**Message Id**: 317df0ce
+**Message Ids**: 7045a961,a1952d66,317df0ce
+**Person Reply**: Commit and open PR\nmerged\nLooks correct
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:26:53Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:26:55Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:26:57Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:26:59Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:01Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:03Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/entities.md
+**Context**: construction > u1-walking-skeleton > functional-design > entities.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:10Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/rules.md
+**Context**: construction > u1-walking-skeleton > functional-design > rules.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:12Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/rules.md
+**Context**: construction > u1-walking-skeleton > functional-design > rules.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:15Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:18Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:20Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:22Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:24Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:26Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/functional-spec.md
+**Context**: construction > u1-walking-skeleton > functional-design > functional-spec.md
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:33Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Context**: construction > u1-walking-skeleton > functional-design > traceability.json
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T15:27:34Z
+**Event**: SENSOR_FIRED
+**Fire id**: 9559e941
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+
+---
+
+## Sensor Failed
+**Timestamp**: 2026-11-26T15:27:35Z
+**Event**: SENSOR_FAILED
+**Fire id**: 9559e941
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Detail path**: aidlc/spaces/default/intents/261125-context-engine/.aidlc-engine/sensors/functional-design/traceability-9559e941.md
+**Findings count**: 1
+
+---
+
+## Artifact Updated
+**Timestamp**: 2026-11-26T15:27:40Z
+**Event**: ARTIFACT_UPDATED
+**Tool**: Edit
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Context**: construction > u1-walking-skeleton > functional-design > traceability.json
+**Summary Authorization Id**: 46e66c1457c2d090224c65b9a64f50a2f6981dfb555a739de8ba5e42ec755eab
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T15:27:41Z
+**Event**: SENSOR_FIRED
+**Fire id**: 0f24f3c5
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T15:27:41Z
+**Event**: SENSOR_PASSED
+**Fire id**: 0f24f3c5
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Duration ms**: 89
+
+---
+
+## Review Requested
+**Timestamp**: 2026-11-26T15:27:42Z
+**Event**: REVIEW_REQUESTED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 1
+**Artifact Fingerprint**: sha256:eada26918bdfc7635327beb7a1e2f946169260a7a117b1bf9258a3786157f0eb
+**Request Id**: review:0d85c5790fe138d57ea45062310e36d0
+**Review File**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/14c01e0a15483f17/1.0d85c5790fe138d57ea45062310e36d0.review.md
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T15:27:48Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/.aidlc-engine/reviewer-dispatch.json
+**Context**: .aidlc-engine > reviewer-dispatch.json
+
+---
+
+## Subagent Dispatched
+**Timestamp**: 2026-11-26T15:28:04Z
+**Event**: SUBAGENT_DISPATCHED
+**Agent Type**: aidlc-architecture-reviewer-agent
+
+---
+
+## Sensor Fired
+**Timestamp**: 2026-11-26T15:28:09Z
+**Event**: SENSOR_FIRED
+**Fire id**: 3c5a939a
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+
+---
+
+## Sensor Passed
+**Timestamp**: 2026-11-26T15:28:09Z
+**Event**: SENSOR_PASSED
+**Fire id**: 3c5a939a
+**Sensor ID**: traceability
+**Stage slug**: functional-design
+**Unit**: u1-walking-skeleton
+**Output path**: aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/functional-design/traceability.json
+**Duration ms**: 96
+
+---
+
+## Artifact Created
+**Timestamp**: 2026-11-26T15:28:21Z
+**Event**: ARTIFACT_CREATED
+**Tool**: Write
+**File**: <project-dir>/aidlc/spaces/default/intents/261125-context-engine/.aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/14c01e0a15483f17/1.0d85c5790fe138d57ea45062310e36d0.review.md
+**Context**: .aidlc-engine > reviews > functional-design > units > u1-walking-skeleton > 14c01e0a15483f17 > 1.0d85c5790fe138d57ea45062310e36d0.review.md
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T15:28:25Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: aidlc-architecture-reviewer-agent
+**Agent ID**: a324871cd538a3765
+**Review File Digest**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/9e7bb4437efd8e30/2.26dbf099dbb31970156fad8b77dab3a4.review.md=absent; .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/14c01e0a15483f17/1.0d85c5790fe138d57ea45062310e36d0.review.md=58339bc18e02966987e6d87b42f905df4fbabffec27a8e868bcdb612418127c6
+
+---
+
+## Host Turn
+**Timestamp**: 2026-11-26T15:28:26Z
+**Event**: HOST_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: host
+**Reason**: claude agent message
+**Source**: template
+
+---
+
+## Review Completed
+**Timestamp**: 2026-11-26T15:28:30Z
+**Event**: REVIEW_COMPLETED
+**Stage**: functional-design
+**Reviewer**: aidlc-architecture-reviewer-agent
+**Unit**: u1-walking-skeleton
+**Iteration**: 1
+**Verdict**: READY
+**Review Verdict Dictated**: no
+**Request Fingerprint**: sha256:eada26918bdfc7635327beb7a1e2f946169260a7a117b1bf9258a3786157f0eb
+**Artifact Fingerprint**: sha256:eada26918bdfc7635327beb7a1e2f946169260a7a117b1bf9258a3786157f0eb
+**Request Id**: review:0d85c5790fe138d57ea45062310e36d0
+**Review Record**: .aidlc-engine/reviews/functional-design/units/u1-walking-skeleton/14c01e0a15483f17/1.json
+**Review Record Digest**: sha256:1e44d8c9b043a887f4ca98afebc68c278fce39551054a6bb02fa4cc140a398b1
+
+---
+
+## Unit Completed
+**Timestamp**: 2026-11-26T15:28:30Z
+**Event**: UNIT_COMPLETED
+**Stage**: functional-design
+**Unit**: u1-walking-skeleton
+**Run floor**: STAGE_JUMPED:2026-11-26T14:25:31Z#1
+
+---
+
+## Subagent Completed
+**Timestamp**: 2026-11-26T15:28:42Z
+**Event**: SUBAGENT_COMPLETED
+**Agent Type**: unknown
+**Agent ID**: a72321b3c93b9799c
+**Message**: Commit and open PR
+
+---
+
+## Human Turn
+**Timestamp**: 2026-11-26T15:28:58Z
+**Event**: HUMAN_TURN
+**Session**: 29dfc8c7-4450-4bca-b623-a21d7098cb9a
+**Origin**: person
+**Source**: typed
+**Message Id**: f2656dcf
+**Open Questions**: 5736ca79, 7613a1f4, a0af6720, 9a49ef54, ca20a49b, 92ae9625, ee2bc851
+**Questions Digest**: {"file":"aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/nfr-requirements-questions.md","entries":{"Q1":"1a7e422bbd503a8b","Q2":"0a73e50b4e9ae9af","Q3":"bfaa1666ca70acb3","Q4":"5ac4c24640223479","Q5":"d5e93698a98a1eb6","Q6":"3f9103f4b1a554eb","Q7":"c66c56e4ceaaf80e","Q8":"65705ddcdd861b9d","Q9":"5c39842d40ea9dbb","Q10":"9577abeefdc676da","Consolidated Summary Confirmation":"843182070fafa844"}}
+
+---

@@ -184,6 +184,33 @@ rules:
     violation: not applicable
     source: FR3.1, FR2.3
 
+  - id: BR6.1
+    statement: Every request acts within exactly one organisation, taken from the address it arrived at and the credential, which must agree.
+    category: authorization
+    applies_to: every web page, API call and MCP tool
+    trigger: any request
+    logic: IF the address names no known organisation OR the session or agent token belongs to another organisation THEN answer "not found" ELSE act only within that organisation
+    violation: not found; nothing about the other organisation is revealed
+    source: FR14.1, FR14.2, NFR14, AC7.1.2, AC7.1.3
+
+  - id: BR6.2
+    statement: Reads, searches and proposal lists only ever return the current organisation's records.
+    category: authorization
+    applies_to: item page, MCP get_item and search_knowledge, proposal lists
+    trigger: any read
+    logic: IF a record belongs to another organisation THEN it is never returned, and a direct request for it answers "not found"
+    violation: not applicable
+    source: FR14.1, NFR14, AC7.1.1, AC7.1.2
+
+  - id: BR6.3
+    statement: Owners, group members, link ends, deciders and idempotency keys never cross organisations.
+    category: constraint
+    applies_to: Proposal, Decision, Link, ItemVersion.owners, Group
+    trigger: proposal submitted, decision requested
+    logic: IF an owner, group member or link end belongs to another organisation THEN refuse it as unknown (BR1.4, BR1.5); a decider from another organisation never reaches the item (BR6.1); the same idempotency key in two organisations is two different keys
+    violation: refused as unknown or not found
+    source: FR14.1, NFR14
+
   - id: BR5.1
     statement: An agent with the Contributor role may propose through MCP, and the proposal is marked as coming from an AI agent.
     category: authorization
@@ -219,6 +246,9 @@ rules:
 | BR4.1 | Read shows approved; pending marked separately |
 | BR4.2 | Search shows approved only |
 | BR5.1 | Contributor agents may propose, marked "AI agent" |
+| BR6.1 | Every request acts within one organisation; address and credential must agree |
+| BR6.2 | Reads and searches return only the current organisation's records |
+| BR6.3 | Owners, members, links, deciders and keys never cross organisations |
 
 ## New requirements recorded here for later units
 

@@ -2,13 +2,23 @@
 
 The entity model for the thin end-to-end slice. Names follow the component catalogue (`inception/domain-design/components.md`): `Item`, `ItemVersion` and `Link` (KnowledgeGraph), `Proposal` and `Decision` (ProposalWorkflow), `User` and `ServiceAccount` (IdentityAccess). U1 adds `Group`, `OwnerRef` and `Source` as recorded in `functional-design-questions.md` Q10 and Q11. Later units extend these entities; they do not replace them.
 
+**Organisations (added 2026-11-26; requirements FR14, NFR14; domain design ADR-009).** Every entity below except `Organisation` carries `organisationId` (required, references Organisation) and belongs to exactly one organisation. The database refuses to read or write a row of another organisation. U1 creates `Organisation` in its smallest form and seeds two of them; U2 (Tenancy) adds sign-up, suspension, operators and the support log.
+
 ```yaml
 entities:
+  - name: Organisation
+    description: One customer of the product. Seeded in U1 (two organisations); created by sign-up from U2.
+    attributes:
+      - { name: organisationId, type: identifier, required: true, unique: true }
+      - { name: name, type: text, required: true, max: 120 }
+      - { name: address, type: text, required: true, unique: true, constraints: "lower-case letters, digits and hyphens; the organisation's own web address is built from it" }
+      - { name: status, type: enum, required: true, allowed: [active], default: active, constraints: "suspended comes in U2" }
+
   - name: User
     description: A person who signs in. Seeded in U1 (a contributor and a human owner); real sign-in comes in U2.
     attributes:
       - { name: userId, type: identifier, required: true, unique: true }
-      - { name: email, type: email, required: true, unique: true }
+      - { name: email, type: email, required: true, constraints: "unique within its organisation; the same email may have an account in another organisation" }
       - { name: displayName, type: text, required: true, max: 120 }
       - { name: role, type: enum, required: true, allowed: [Reader, Contributor, Approver, Admin], default: Contributor }
       - { name: status, type: enum, required: true, allowed: [active, deactivated], default: active }
@@ -28,8 +38,8 @@ entities:
     description: A named set of people, defined by the organisation (for example techLead). U1 seeds one group containing the human owner; the role and permission matrix comes in U2.
     attributes:
       - { name: groupId, type: identifier, required: true, unique: true }
-      - { name: name, type: text, required: true, unique: true, max: 80 }
-      - { name: memberUserIds, type: list<identifier>, required: true, references: User, min: 1 }
+      - { name: name, type: text, required: true, max: 80, constraints: "unique within its organisation" }
+      - { name: memberUserIds, type: list<identifier>, required: true, references: User, min: 1, constraints: "members belong to the group's organisation" }
 
   - name: OwnerRef
     description: One entry in an item's owners list. Value object, stored inside ItemVersion.
@@ -103,7 +113,7 @@ entities:
       - { name: proposerId, type: identifier, required: true, references: "User or ServiceAccount" }
       - { name: status, type: enum, required: true, allowed: [open, approved, rejected, out-of-date], default: open }
       - { name: createdAt, type: timestamp, required: true }
-      - { name: idempotencyKey, type: text, required: true, max: 200, constraints: "contract C1 Idempotency-Key, on web and MCP alike; unique per proposer within 24 hours" }
+      - { name: idempotencyKey, type: text, required: true, max: 200, constraints: "contract C1 Idempotency-Key, on web and MCP alike; unique per proposer within 24 hours, within the organisation" }
     relationships:
       - { to: Decision, cardinality: one-to-zero-or-one, direction: Proposal has at most one Decision }
 
@@ -126,6 +136,7 @@ entities:
 - **Owners** are always a list of `OwnerRef` entries (a person, a group or an agent), stored on each version so ownership changes are part of history.
 - **Sources** are a system source (who proposed and through which channel) on every version, plus any added by hand.
 - **User, ServiceAccount, Group** are seeded in U1 and replaced by real sign-in, groups and permissions in U2.
+- **Organisation** scopes everything else: two are seeded, every other entity carries `organisationId`, and owners, group members and both ends of a link always share the item's organisation.
 
 ## Deviations from the domain design
 
@@ -138,5 +149,6 @@ entities:
 ## Sources
 - `inception/domain-design/components.md` (entity names and attributes).
 - `inception/units-generation/unit-of-work.md` (U1 boundary).
-- `inception/contract-design/contract-summary.md` (C1 idempotency, C2 MCP tools).
+- `inception/contract-design/contract-summary.md` (C1 idempotency, C2 MCP tools, organisation rules).
+- `inception/requirements-analysis/requirements.md` FR14, NFR14; `inception/units-generation/units-generation-questions.md` Q7.
 - `functional-design-questions.md` Q1 to Q11.
