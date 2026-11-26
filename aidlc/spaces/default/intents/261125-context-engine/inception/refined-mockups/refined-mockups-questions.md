@@ -68,13 +68,15 @@ X. Other (please specify)
 - Theme: light and dark, following the device with a manual switch (Q4)
 - Notifications: web app, chat (Slack or Teams) and email, each person choosing which (Q5)
 - Already settled and carried forward: 3D map home with synced side panel and list view, clean neutral look, fully responsive with desktop first, WCAG 2.1 AA
+- Organisation address (hosted service): each organisation has its own web address chosen at sign-up; signing in there signs in to that organisation, and links go straight to it (Q6)
+- Hosted-service screens added from the updated stories (US7.2 to US7.5): sign-up, signing in at the organisation's address, a suspended-organisation notice, the operator console, and the support access log in Admin settings; none of these appear on a self-hosted install (US7.6)
 
 Does this all look correct before I generate the artifact?
 
 - Looks correct
 - Request changes
 
-[Answer]:
+[Answer]: Looks correct
 
 ## Q6. [Designer] How do people reach their own organisation on the hosted service?
 
@@ -85,4 +87,4 @@ B. One address for everyone; the sign-in page asks for the organisation's name f
 C. One address; the person enters their email and picks from the organisations that email has accounts in
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A

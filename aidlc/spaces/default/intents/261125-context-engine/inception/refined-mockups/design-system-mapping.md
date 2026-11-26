@@ -30,6 +30,9 @@ Inputs: `mockups.md`, `interaction-spec.md`, `ideation/rough-mockups/wireframes.
 | Wizard | Card plus custom stepper using Progress | S12 |
 | Chat | ScrollArea, Textarea, Button | S6 |
 | 3D map | three.js through react-three-fiber and a force-graph library (proven open source); not part of shadcn | S1 |
+| Sign-up and sign-in forms | Form, Input, Button | S14, S15 |
+| Suspended notice | Alert | S16 |
+| Support access log, operator console | Table, Alert Dialog (reason required), Alert (support banner) | S17, S18 |
 
 ## Tokens
 

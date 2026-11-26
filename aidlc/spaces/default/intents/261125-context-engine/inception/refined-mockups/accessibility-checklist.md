@@ -35,6 +35,11 @@ Inputs: `mockups.md`, `interaction-spec.md`, `design-system-mapping.md`, `ideati
 | S10 My items | My items | header, nav, main | First tab | Status shown as text (STALE, DUE) |
 | S11 Notifications | Notifications | header, main | First checkbox | Grid as a table with row and column headers |
 | S12 First run | Set up your Context Engine | header, main | First field of the step | Progress shown as "Step 2 of 4" in text |
+| S14 Sign up | Create your organisation | main | Organisation name | Address availability announced in a live region; errors linked to fields |
+| S15 Sign in | Sign in to (organisation name) | main | First sign-in button | Organisation named in the h1; refusal message in text |
+| S16 Suspended | (organisation) is suspended | main | Page heading | Message is text, not colour; no dead-end controls |
+| S17 Support access | Support access log | header, nav, main | Table | Table with headers; read-only stated in text |
+| S18 Operator console | Operator console | header, main | Table | Status as text; reason required in dialogs; support banner announced |
 
 ## Testing
 
