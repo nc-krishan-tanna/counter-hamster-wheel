@@ -74,4 +74,15 @@ Does this all look correct before I generate the artifact?
 - Looks correct
 - Request changes
 
-[Answer]: Looks correct
+[Answer]:
+
+## Q6. [Designer] How do people reach their own organisation on the hosted service?
+
+New on 2026-11-26 with the hosted service (requirements FR14.2, A7; stories US7.2, US7.3): an account belongs to one organisation, and the same email can have accounts in several. The screens need one way for a person to say which organisation they are signing in to, with Google, Microsoft or a password.
+
+A. Each organisation has its own web address (for example `acme.` followed by the service's address), chosen at sign-up; signing in there signs in to that organisation, and bookmarks and Slack or Teams links go straight to it (Recommended: nothing extra to type, and a sign-in never reveals which other organisations an email belongs to)
+B. One address for everyone; the sign-in page asks for the organisation's name first
+C. One address; the person enters their email and picks from the organisations that email has accounts in
+X. Other (please specify)
+
+[Answer]:

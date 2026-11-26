@@ -1,10 +1,10 @@
 # Requirements: Organisational Context Engine
 
-Inputs: `ideation/intent-capture/intent-statement.md` (intent-statement), `ideation/scope-definition/scope-document.md` (scope-document), `inception/practices-discovery/team-practices.md` (team-practices), the rough mockups (`ideation/rough-mockups/wireframes.md`, `user-flow.md`), feasibility (`ideation/feasibility/constraint-register.md`) and the answers in `requirements-analysis-questions.md` (Q1 to Q10).
+Inputs: `ideation/intent-capture/intent-statement.md` (intent-statement), `ideation/scope-definition/scope-document.md` (scope-document), `inception/practices-discovery/team-practices.md` (team-practices), the rough mockups (`ideation/rough-mockups/wireframes.md`, `user-flow.md`), feasibility (`ideation/feasibility/constraint-register.md`) and the answers in `requirements-analysis-questions.md` (Q1 to Q17).
 
 ## Intent analysis
 
-The organisation's knowledge is scattered, its rules change without a record, and AI tools answer without trustworthy company context (intent-statement). The goal is a self-hosted, open-source engine that becomes the organisation's living reference: it captures business rules, processes, the organisational map and decisions from people and from the tools they already use; it makes every change accountable through owner approval and a full history; and it serves that knowledge every day to people and AI agents, often without them noticing (intent-statement, scope-document). The experience must be as frictionless as possible while keeping accountability built in (Q9).
+The organisation's knowledge is scattered, its rules change without a record, and AI tools answer without trustworthy company context (intent-statement). The goal is a self-hosted, open-source engine that becomes the organisation's living reference: it captures business rules, processes, the organisational map and decisions from people and from the tools they already use; it makes every change accountable through owner approval and a full history; and it serves that knowledge every day to people and AI agents, often without them noticing (intent-statement, scope-document). The experience must be as frictionless as possible while keeping accountability built in (Q9). The same product is offered two ways: open source for organisations to self-host from containers, and as a hosted service run by the team for many organisations at once, each kept fully separate (Q11 to Q17, added 2026-11-26).
 
 - **Type:** new product (greenfield)
 - **Scope:** system-wide; many components
@@ -21,6 +21,8 @@ The organisation's knowledge is scattered, its rules change without a record, an
 | Owner | The person accountable for an item; approves proposals that change it |
 | Source | Where content came from: a connected tool (Drive, SharePoint, Slack, Teams, Meet, ChatGPT projects), a file upload, a person, or an AI agent |
 | Blast radius | The set of items a proposal would affect, directly or through links |
+| Organisation | One customer of the product; all its people, agents, knowledge, connections and settings. A self-hosted install has one; the hosted service has many |
+| Operator | A member of the team that runs the hosted service; manages organisations, not their knowledge |
 
 ## Functional requirements
 
@@ -159,11 +161,14 @@ The organisation's knowledge is scattered, its rules change without a record, an
 
 - **FR11.4** Any role may be made an item's owner except Reader. (assumption: see Assumptions)
 - **FR11.5** Role checks shall apply to every read and write, including search, MCP and the chat assistants. (corner checklist)
+- **FR11.6** Roles are held within one organisation: an account's role applies only in the organisation it belongs to (FR14.2). (Q14)
 
 **Acceptance criteria**
 - Given a Reader, when they try to raise a proposal through the web app or MCP, then the system refuses.
 
 ### FR12 Organisation settings
+
+Every setting below belongs to one organisation and is changed only by that organisation's Admins. (Q11)
 
 - **FR12.1** Admins shall choose which privacy laws and security classifications apply, from presets. (constraint-register RC-1)
 - **FR12.2** Admins shall configure how sensitive content from chat and transcripts is handled. The default keeps all raw content, visible only to Admins; excerpts behind items follow the item's visibility. (constraint-register RC-2, Q8)
@@ -172,8 +177,24 @@ The organisation's knowledge is scattered, its rules change without a record, an
 
 ### FR13 Self-hosting
 
-- **FR13.1** The engine shall be delivered as container images that run on any container host. One installation serves one organisation. (constraint-register TC-1, TC-2)
-- **FR13.2** A first run with no data shall guide an Admin through sign-in setup, the AI model and the first connection. (corner checklist)
+- **FR13.1** The engine shall be delivered as container images that run on any container host. A self-hosted installation serves exactly one organisation; the hosted service runs the same images for many organisations (FR14). (constraint-register TC-1, TC-2; Q12)
+- **FR13.2** A first run with no data shall guide an Admin through sign-in setup, the AI model and the first connection. On the hosted service, this runs for each new organisation after sign-up. (corner checklist; Q13)
+
+### FR14 Organisations and the hosted service
+
+- **FR14.1** The system shall serve many organisations from one running copy and one database. No person, agent, page, search, answer, MCP call, job, notification, export or log line shall show or change one organisation's data on behalf of another. (Q11)
+- **FR14.2** Every account, person or service account, belongs to exactly one organisation. The same email address may hold separate accounts in different organisations, and signing in names the organisation. (Q14)
+- **FR14.3** On the hosted service, anyone can sign up to create a new organisation and becomes its first Admin. A self-hosted install has no sign-up; its first Admin is created at first run (FR13.2). (Q13)
+- **FR14.4** Operators shall have a console to list organisations with their usage (people, items, storage) and to suspend or reactivate an organisation. A suspended organisation's people and agents cannot sign in or call the API or MCP; its data is kept unchanged. (Q13, Q16)
+- **FR14.5** Operators may open an organisation's knowledge for support. Every such access shall record the operator, the time, what was opened and the reason given, shall be visible to that organisation's Admins, and cannot be edited or deleted. (Q17)
+- **FR14.6** A self-hosted install runs the same product with exactly one organisation; sign-up and the operator console are switched off. (Q12)
+
+**Acceptance criteria**
+- Given organisations A and B on the hosted service, when a person or agent in A searches, reads, proposes, asks or exports, then nothing from B is returned or changed, and a direct request for a B item id returns "not found".
+- Given the same email address has accounts in A and B, when the person signs in to A, then they see only A and hold only their A role.
+- Given a new visitor on the hosted service, when they sign up with a new organisation name, then the organisation exists, they are its Admin, and the first-run setup starts.
+- Given an operator suspends organisation A, when a person or agent in A tries to sign in or call MCP, then they are refused, and when A is reactivated, then all its data is unchanged.
+- Given an operator opens an item in A for support with a reason, when A's Admin views the access log, then the operator, time, item and reason are listed.
 
 ## Non-functional requirements
 
@@ -192,10 +213,12 @@ The organisation's knowledge is scattered, its rules change without a record, an
 | NFR11 | Quality | Tests written first; at least 80% line coverage; CI runs tests on every change and a failure blocks the merge | team-practices |
 | NFR12 | Portability | All parts run as containers; no dependency on one cloud provider | constraint-register TC-2 |
 | NFR13 | Observability | Each service has a health check; error rate, sync status per connection and proposal latency are measurable | team-practices (done means healthy) |
+| NFR14 | Organisation isolation | Every table holding an organisation's data has PostgreSQL row-level security keyed on the organisation; automated tests prove that for every API route, MCP tool, search, job type and export, a caller in one organisation can neither read nor change another organisation's data | Q11 |
+| NFR15 | Data location | All hosted organisations' data, including backups, is stored in one hosting region, named publicly | Q15 |
 
 ## Constraints
 
-- One organisation per installation; open-source; self-hosted as containers. (constraint-register)
+- Open source; self-hosted as containers with one organisation per installation, and a hosted multi-organisation service from the same images. (constraint-register; Q11, Q12)
 - TypeScript and Rust; GitHub, GitHub Actions and GitHub Container Registry. (team-practices)
 - Pluggable AI models: hosted or self-run. (constraint-register)
 - Simple roles only; no fine-grained permissions. (intent-statement)
@@ -211,11 +234,15 @@ The organisation's knowledge is scattered, its rules change without a record, an
 | A4 | Contributors, Approvers and Admins can be owners; Readers cannot (FR11.4) | An owner must be able to propose; follows the role model you left to me |
 | A5 | Metric targets from the intent statement stay unset for this MVP | You said they are not important at this stage |
 | A6 | ChatGPT projects automated access is unconfirmed; file import is the fallback (FR5.5) | Feasibility hypothesis |
+| A7 | Signing in names the organisation (for example by its own address or a name entered first), so one email can hold accounts in several organisations (FR14.2) | Needed for "one account per organisation" (Q14) with Google and Microsoft sign-in, where the same email is common |
+| A8 | Each hosted organisation has the same size target as NFR4 (100 people); the hosted service's total capacity target is set before the hosted service launches | Not stated; see Open questions |
 
 ## Out of scope
 
 - Fine-grained permissions beyond the four roles. (intent-statement)
-- One shared hosted service for many organisations. (intent-statement)
+- Payment, plans or billing inside the product; hosted contracts are handled outside it. (Q16)
+- A choice of hosting region per organisation; an organisation needing another region self-hosts. (Q15)
+- One account across several organisations. (Q14)
 - Fixed success-metric targets. (scope-document)
 - Live activity animation of the map ("neurons firing"); deprioritised. (rough mockups Q9)
 
@@ -224,3 +251,10 @@ The organisation's knowledge is scattered, its rules change without a record, an
 - Which parts are written in Rust. (team-practices) To settle in design.
 - Whether GitHub branch protection enforces "never commit straight to main". (practices evidence)
 - The exact rules behind the risk level (FR4.2) are set in functional design.
+- The hosted service's total capacity (how many organisations and people on one copy) before it launches (A8).
+- Whether an operator's support access needs the organisation Admin's consent first, or only logging (FR14.5).
+- Which hosting region the hosted service uses (NFR15).
+
+## Change log
+
+- 2026-11-26: hosted multi-organisation service added (FR14, FR11.6, NFR14, NFR15; FR12, FR13.1, FR13.2 and Constraints updated; "one shared hosted service for many organisations" removed from Out of scope). Decided during U1 Infrastructure Design (`construction/u1-walking-skeleton/infrastructure-design/infrastructure-design-questions.md` Q1, Q2) and detailed in Q11 to Q17 here.

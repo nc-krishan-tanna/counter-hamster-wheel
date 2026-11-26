@@ -65,6 +65,7 @@
     { "id": "FR11.3", "kind": "functional", "of": "FR11" },
     { "id": "FR11.4", "kind": "functional", "of": "FR11" },
     { "id": "FR11.5", "kind": "functional", "of": "FR11" },
+    { "id": "FR11.6", "kind": "functional", "of": "FR11" },
     { "id": "FR12", "kind": "functional" },
     { "id": "FR12.1", "kind": "functional", "of": "FR12" },
     { "id": "FR12.2", "kind": "functional", "of": "FR12" },
@@ -73,6 +74,13 @@
     { "id": "FR13", "kind": "functional" },
     { "id": "FR13.1", "kind": "functional", "of": "FR13" },
     { "id": "FR13.2", "kind": "functional", "of": "FR13" },
+    { "id": "FR14", "kind": "functional" },
+    { "id": "FR14.1", "kind": "functional", "of": "FR14" },
+    { "id": "FR14.2", "kind": "functional", "of": "FR14" },
+    { "id": "FR14.3", "kind": "functional", "of": "FR14" },
+    { "id": "FR14.4", "kind": "functional", "of": "FR14" },
+    { "id": "FR14.5", "kind": "functional", "of": "FR14" },
+    { "id": "FR14.6", "kind": "functional", "of": "FR14" },
     { "id": "NFR1", "kind": "non-functional" },
     { "id": "NFR2", "kind": "non-functional" },
     { "id": "NFR3", "kind": "non-functional" },
@@ -85,6 +93,8 @@
     { "id": "NFR10", "kind": "non-functional" },
     { "id": "NFR11", "kind": "non-functional" },
     { "id": "NFR12", "kind": "non-functional" },
-    { "id": "NFR13", "kind": "non-functional" }
+    { "id": "NFR13", "kind": "non-functional" },
+    { "id": "NFR14", "kind": "non-functional" },
+    { "id": "NFR15", "kind": "non-functional" }
   ]
 }
