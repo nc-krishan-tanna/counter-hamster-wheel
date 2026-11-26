@@ -12,7 +12,7 @@ C. Score every Bolt with a formal model (WSJF: value plus urgency plus risk redu
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q2. [Delivery lead] How big should one Bolt be?
 
@@ -24,7 +24,7 @@ C. Thin slices that cut across several units (one user journey per Bolt)
 D. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q3. [Delivery lead] How should I run the build with you, unit by unit or stage by stage?
 
@@ -35,7 +35,7 @@ B. Stage by stage: do one design step for all ready units, then the next; code f
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q4. [Delivery lead] When should the 6 open contract concerns from Contract Design be fixed?
 
@@ -46,7 +46,7 @@ B. All at once, as the first step of U1, before any code
 C. Leave them open until they cause a problem
 X. Other (please specify)
 
-[Answer]:
+[Answer]: X. Other: a decision per concern. (1) Worker data access: add internal, worker-only REST paths. (2) Missing in-process interfaces: solved in the design of the unit that owns the interface. (3) Proposal timeout: the impact assessment runs asynchronously through the event/job queue; the proposal is recorded at once and waits with its assessment pending. (4) Dead letters: add Admin-only paths (list, retry, discard). (5) Smaller API gaps: solved in the unit each gap touches. (6) Job-queue and security details: solved in the unit each touches.
 
 ## Q5. [Tech lead] Who sets up the outside accounts the build needs?
 
@@ -57,7 +57,7 @@ B. An IT or admin team provides them on request
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q6. [Sponsor] Is anything outside the team going to hold up the build?
 
@@ -66,7 +66,7 @@ B. Yes (please list who owns it, how long it takes and what it blocks)
 C. Not yet defined
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
 
 ## Q7. [Delivery lead] What worries you most about this build, so we tackle it early? (select all that apply)
 
@@ -76,4 +76,21 @@ C. The 3D map staying smooth with 10,000 items
 D. Non-technical people finding approvals and editing easy
 X. Other (please specify)
 
-[Answer]:
+[Answer]: D
+
+## Consolidated Summary Confirmation
+
+Does this all look correct before I generate the artifact?
+
+- Build order: after the thin end-to-end slice (U1), riskiest first, then value: the AI gateway and extraction pipeline with one real connection against the 5-minute target, and the ChatGPT projects access check, come next; then approvals, Ask and the web screens.
+- Bolt size: one unit per Bolt, with very small units that only make sense together bundled; each Bolt still merges as several 1 to 2 day pull requests.
+- Build pace: one unit at a time; each unit goes through its design steps and code, and you check it before the next starts.
+- Contract concerns: worker data access through internal, worker-only REST paths; missing in-process interfaces solved in the unit that owns the interface; impact assessment runs asynchronously through the job queue, with the proposal recorded at once and its assessment pending; Admin-only dead-letter paths (list, retry, discard); the smaller API gaps and the job-queue and security details solved in the unit each touches.
+- Outside accounts: the tech leads create free or trial test accounts themselves, kept apart from any real organisation's data.
+- Outside blockers: none apart from the open-source licence, which the sponsor chooses before the first public release (U20).
+- Biggest worry: non-technical people finding approvals and editing easy, so the approval and editing screens get early usability checks with real non-technical users.
+
+- Looks correct
+- Request changes
+
+[Answer]: Looks correct
