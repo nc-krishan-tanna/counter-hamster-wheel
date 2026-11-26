@@ -1,28 +1,88 @@
 # Component Catalogue: Organisational Context Engine
 
-Inputs: `inception/requirements-analysis/requirements.md` (requirements), `inception/user-stories/stories.md` (stories), `inception/practices-discovery/team-practices.md` (team-practices) and `domain-design-questions.md` (Q1 to Q4). Decisions are recorded in `decisions.md`.
+Inputs: `inception/requirements-analysis/requirements.md` (requirements), `inception/user-stories/stories.md` (stories), `inception/practices-discovery/team-practices.md` (team-practices) and `domain-design-questions.md` (Q1 to Q5). Decisions are recorded in `decisions.md`.
 
 These are the logical building blocks: code we write. Databases, model providers and third-party APIs appear as external dependencies. How components group into deployable units is decided in Units Generation. Technology choices, including where Rust is used, are made in later stages.
+
+**Organisations (added 2026-11-26, Q5; requirements FR14, NFR14).** The hosted service serves many organisations from one copy. The new Tenancy component owns each `Organisation`. Every entity owned by any other component carries an `organisationId` attribute that references `Organisation` (owned by Tenancy); for readability that attribute and reference are stated once here rather than repeated on each entity below. The database enforces the separation with row-level security on `organisationId`, so a query can never return or change another organisation's rows, even if code forgets a filter. A self-hosted install has exactly one Organisation.
 
 ## Catalogue
 
 ```yaml
 components:
+  - name: Tenancy
+    summary: The organisations on the service, the operators who run it, and the record of their access
+    behaviour: >
+      Owns each Organisation: its name, its unique address (lower-case letters, digits and hyphens;
+      reserved and taken addresses refused), its status (active or suspended) and its hosting region.
+      Resolves which organisation a request is for from the address it arrived at. Suspending an
+      organisation needs an operator and a reason and is recorded; a suspended organisation's people and
+      agents are refused and its background work is skipped, while its data is kept unchanged. Owns operator
+      accounts, which sit outside every organisation and sign in to the operator console only. Every time an
+      operator opens an organisation's knowledge for support, it records the operator, time, what was opened
+      and the reason; these records cannot be edited or deleted and are visible to that organisation's Admins.
+      On a self-hosted install there is exactly one organisation, and sign-up and operators are switched off.
+    responsibilities:
+      - Organisations, their addresses, status and hosting region
+      - Resolving the organisation for each request
+      - Suspension and reactivation, with recorded reasons
+      - Operator accounts and the operator console's data
+      - The support access log
+    depends_on: []
+    dependents:
+      - component: IdentityAccess
+        interaction: Resolves the organisation from the address; creates an organisation at sign-up; refuses suspended organisations
+      - component: Ingestion
+        interaction: Skips syncing for suspended organisations
+      - component: Extraction
+        interaction: Skips extraction for suspended organisations
+      - component: Freshness
+        interaction: Skips reminders for suspended organisations
+      - component: Notifications
+        interaction: Skips deliveries for suspended organisations
+      - component: WebApp
+        interaction: Sign-up, suspended notice, support access log, operator console
+    external_dependencies:
+      - name: Relational database with row-level security
+        kind: database
+        purpose: Organisations, operators, support access log; row-level security for every other component's data
+    entities:
+      - name: Organisation
+        identifier: organisationId
+        attributes: [name, address, status, hostingRegion, suspendedReason, createdAt]
+      - name: OperatorAccount
+        identifier: operatorId
+        attributes: [email, displayName, status]
+      - name: OrganisationStatusChange
+        identifier: statusChangeId
+        attributes: [organisationId, operatorId, fromStatus, toStatus, reason, changedAt]
+      - name: SupportAccessEntry
+        identifier: supportAccessId
+        attributes: [organisationId, operatorId, subjectRef, reason, openedAt]
+
   - name: IdentityAccess
-    summary: Who people and agents are, and what their role lets them do
+    summary: Who people and agents are within an organisation, and what their role lets them do
     behaviour: >
       Signs people in through an established authentication library or service (Google and Microsoft
-      single sign-on, email and password); never stores passwords itself. Holds the four roles (Reader,
-      Contributor, Approver, Admin) and answers permission checks for every other component. Matches
-      Slack and Teams users to accounts by work email; unmatched chat users get no access. Deactivating
-      a person publishes a "user deactivated" event. Service accounts give AI agents a role.
+      single sign-on, email and password); never stores passwords itself. Sign-in happens at the
+      organisation's own address, and an account belongs to exactly one organisation: the same email may
+      have separate accounts in different organisations. On the hosted service, sign-up creates the
+      organisation through Tenancy and makes the person its first Admin. Holds the four roles (Reader,
+      Contributor, Approver, Admin) within the organisation and answers permission checks for every other
+      component, refusing any request for a suspended organisation. Each Slack or Teams workspace is linked
+      to exactly one organisation; a workspace already linked elsewhere is refused. Chat users are matched to
+      accounts by work email within that organisation; unmatched chat users get no access. Deactivating a
+      person publishes a "user deactivated" event. Service accounts give AI agents a role in one organisation.
     responsibilities:
-      - Sign-in and sessions (delegated to an established auth library)
-      - Users, service accounts and roles
+      - Sign-in, sign-up and sessions (delegated to an established auth library)
+      - Users, service accounts and roles within an organisation
       - Permission checks for every read and write
-      - Chat identity matching by work email
+      - Linking chat workspaces to one organisation; chat identity matching by work email
       - Publishing user-deactivated events
-    depends_on: []
+    depends_on:
+      - component: Tenancy
+        interaction: Resolve the organisation from the address; create an organisation at sign-up; check suspension
+        style: sync
     dependents:
       - component: KnowledgeGraph
         interaction: Listens for user-deactivated events to unown items
@@ -64,12 +124,19 @@ components:
           - entity: User
             owned_by: IdentityAccess
             relationship: each chat identity links to at most one User
+      - name: ChatWorkspaceLink
+        identifier: chatWorkspaceLinkId
+        attributes: [platform, externalWorkspaceId, linkedAt]
+        references:
+          - entity: Organisation
+            owned_by: Tenancy
+            relationship: each Slack or Teams workspace belongs to exactly one Organisation
 
   - name: OrgSettings
     summary: Organisation-wide settings chosen by Admins
     behaviour: >
-      Holds privacy-law and security-classification presets, sensitive-content handling (default: keep raw
-      content, visible only to Admins), the default review period, and branding. Refuses a brand colour that
+      Holds one organisation's privacy-law and security-classification presets, sensitive-content handling
+      (default: keep raw content, visible only to Admins), the default review period, and branding. Refuses a brand colour that
       fails contrast in either theme. Every change is recorded with who made it and when.
     responsibilities:
       - Privacy and security presets
@@ -237,6 +304,9 @@ components:
       - component: IdentityAccess
         interaction: Recipient details, chat links and email
         style: sync
+      - component: Tenancy
+        interaction: Skip deliveries for suspended organisations
+        style: sync
     dependents:
       - component: ProposalWorkflow
         interaction: Notify owners, proposers and overridden owners
@@ -351,6 +421,9 @@ components:
       - component: IdentityAccess
         interaction: Find Approvers and Admins; check who may confirm
         style: sync
+      - component: Tenancy
+        interaction: Skip reminders for suspended organisations
+        style: sync
     dependents:
       - component: WebApp
         interaction: My items screen and confirmations
@@ -368,7 +441,9 @@ components:
     behaviour: >
       Each source (Google Workspace, Microsoft 365, Slack, ChatGPT projects, file upload, and any new
       connection that follows the standard contract) is a connection with its own status, chosen scope
-      (folders, channels, meetings) and last-sync time. A failing connection never stops the others.
+      (folders, channels, meetings) and last-sync time. Each connection and its credentials belong to
+      exactly one organisation; a Google or Microsoft tenant or Slack workspace already connected to another
+      organisation is refused. Syncing stops while the organisation is suspended. A failing connection never stops the others.
       Content is stored as SourceDocuments; raw content is kept or discarded and its visibility restricted
       according to the organisation's sensitive-content policy. Publishes "content changed" events.
     responsibilities:
@@ -379,6 +454,9 @@ components:
     depends_on:
       - component: OrgSettings
         interaction: Read the sensitive-content policy
+        style: sync
+      - component: Tenancy
+        interaction: Skip syncing for suspended organisations
         style: sync
     dependents:
       - component: Extraction
@@ -436,6 +514,9 @@ components:
         style: sync
       - component: ProposalWorkflow
         interaction: Raise proposals
+        style: sync
+      - component: Tenancy
+        interaction: Skip extraction for suspended organisations
         style: sync
     dependents: []
     external_dependencies:
@@ -612,6 +693,9 @@ components:
       - component: AIGateway
         interaction: Model settings and connection test
         style: sync
+      - component: Tenancy
+        interaction: Sign-up, suspended notice, support access log, operator console
+        style: sync
     dependents: []
     external_dependencies: []
     entities: []
@@ -661,34 +745,46 @@ graph TD
     Notifications --> IdentityAccess
     Ingestion --> OrgSettings
     KnowledgeGraph -- "user deactivated (event)" --> IdentityAccess
+    IdentityAccess --> Tenancy
+    Ingestion --> Tenancy
+    Extraction --> Tenancy
+    Freshness --> Tenancy
+    Notifications --> Tenancy
+    WebApp --> Tenancy
 ```
 
-<!-- Text fallback: Arrows point from a component to the component it depends on. WebApp depends on almost everything. MCPServer and ChatAssistant are thin adapters over KnowledgeQuery and IdentityAccess (MCPServer also over ProposalWorkflow). KnowledgeQuery uses KnowledgeGraph, AIGateway, IdentityAccess, ProposalWorkflow and ImpactAssessment. Extraction consumes Ingestion events and uses AIGateway, KnowledgeGraph and ProposalWorkflow. ProposalWorkflow uses KnowledgeGraph, ImpactAssessment, IdentityAccess and Notifications. Freshness uses KnowledgeGraph, Notifications and IdentityAccess. ImpactAssessment uses KnowledgeGraph and AIGateway. Notifications uses IdentityAccess. Ingestion uses OrgSettings. KnowledgeGraph listens to IdentityAccess deactivation events. IdentityAccess, OrgSettings and AIGateway depend on nothing. There are no cycles. -->
+<!-- Text fallback: Arrows point from a component to the component it depends on. Tenancy depends on nothing; IdentityAccess, Ingestion, Extraction, Freshness, Notifications and WebApp depend on it. WebApp depends on almost everything. MCPServer and ChatAssistant are thin adapters over KnowledgeQuery and IdentityAccess (MCPServer also over ProposalWorkflow). KnowledgeQuery uses KnowledgeGraph, AIGateway, IdentityAccess, ProposalWorkflow and ImpactAssessment. Extraction consumes Ingestion events and uses AIGateway, KnowledgeGraph and ProposalWorkflow. ProposalWorkflow uses KnowledgeGraph, ImpactAssessment, IdentityAccess and Notifications. Freshness uses KnowledgeGraph, Notifications and IdentityAccess. ImpactAssessment uses KnowledgeGraph and AIGateway. Notifications uses IdentityAccess. Ingestion uses OrgSettings. KnowledgeGraph listens to IdentityAccess deactivation events. OrgSettings and AIGateway depend on nothing; IdentityAccess depends only on Tenancy. There are no cycles. -->
 
 ## Component Summary
 
 | Component | Purpose | Depends On | Dependents | Entities Owned |
 |---|---|---|---|---|
-| IdentityAccess | People, agents, roles, permission checks | — | KnowledgeGraph, Notifications, ProposalWorkflow, Freshness, KnowledgeQuery, MCPServer, ChatAssistant, WebApp | User, ServiceAccount, ChatIdentityLink |
+| Tenancy | Organisations, operators, suspension, support access log | — | IdentityAccess, Ingestion, Extraction, Freshness, Notifications, WebApp | Organisation, OperatorAccount, OrganisationStatusChange, SupportAccessEntry |
+| IdentityAccess | People, agents, roles, permission checks within an organisation | Tenancy | KnowledgeGraph, Notifications, ProposalWorkflow, Freshness, KnowledgeQuery, MCPServer, ChatAssistant, WebApp | User, ServiceAccount, ChatIdentityLink, ChatWorkspaceLink |
 | OrgSettings | Organisation-wide settings | — | Ingestion, WebApp | OrganisationSettings |
 | AIGateway | Pluggable AI model access | — | ImpactAssessment, Extraction, KnowledgeQuery, Simulation, WebApp | ModelConfig |
 | KnowledgeGraph | Items, links, versioned history | IdentityAccess (event) | ImpactAssessment, ProposalWorkflow, Freshness, Extraction, KnowledgeQuery, Simulation, WebApp | Item, ItemVersion, Link |
 | ImpactAssessment | Risk, blast radius, contradictions | KnowledgeGraph, AIGateway | ProposalWorkflow, KnowledgeQuery, Simulation, WebApp | Assessment |
-| Notifications | Notify via web, chat, email | IdentityAccess | ProposalWorkflow, Freshness, WebApp | Notification, NotificationPreference |
+| Notifications | Notify via web, chat, email | IdentityAccess, Tenancy | ProposalWorkflow, Freshness, WebApp | Notification, NotificationPreference |
 | ProposalWorkflow | Drafts, proposals, accountable decisions | KnowledgeGraph, ImpactAssessment, IdentityAccess, Notifications | Extraction, KnowledgeQuery, MCPServer, WebApp | Draft, Proposal, Decision, GapRequest |
-| Freshness | Staleness and reminders | KnowledgeGraph, Notifications, IdentityAccess | WebApp | ReminderLog |
-| Ingestion | Connections and source content | OrgSettings | Extraction, WebApp | Connection, SourceDocument |
-| Extraction | Content to proposals | Ingestion (event), AIGateway, KnowledgeGraph, ProposalWorkflow | — | ExtractionRecord |
+| Freshness | Staleness and reminders | KnowledgeGraph, Notifications, IdentityAccess, Tenancy | WebApp | ReminderLog |
+| Ingestion | Connections and source content | OrgSettings, Tenancy | Extraction, WebApp | Connection, SourceDocument |
+| Extraction | Content to proposals | Ingestion (event), AIGateway, KnowledgeGraph, ProposalWorkflow, Tenancy | — | ExtractionRecord |
 | KnowledgeQuery | Shared search, answers, Ask | KnowledgeGraph, AIGateway, IdentityAccess, ProposalWorkflow, ImpactAssessment | MCPServer, ChatAssistant, WebApp | Conversation |
 | Simulation | Sandbox and scenarios | ImpactAssessment, AIGateway, KnowledgeGraph | WebApp | SandboxSession |
 | MCPServer | AI agent door | KnowledgeQuery, ProposalWorkflow, IdentityAccess | — | — |
 | ChatAssistant | Slack and Teams answers | KnowledgeQuery, IdentityAccess | — | — |
-| WebApp | Browser experience | (11 components) | — | — |
+| WebApp | Browser experience | (12 components) | — | — |
 
 ## Entity Ownership
 
 | Entity | Owning Component | Identifier | Attributes | References |
 |---|---|---|---|---|
+| Organisation | Tenancy | organisationId | name, address, status, hostingRegion, suspendedReason, createdAt | — |
+| OperatorAccount | Tenancy | operatorId | email, displayName, status | — |
+| OrganisationStatusChange | Tenancy | statusChangeId | organisationId, operatorId, fromStatus, toStatus, reason, changedAt | — |
+| SupportAccessEntry | Tenancy | supportAccessId | organisationId, operatorId, subjectRef, reason, openedAt | — |
+| ChatWorkspaceLink | IdentityAccess | chatWorkspaceLinkId | platform, externalWorkspaceId, linkedAt | Organisation (Tenancy) |
 | User | IdentityAccess | userId | email, displayName, role, status, authProvider | — |
 | ServiceAccount | IdentityAccess | serviceAccountId | name, role, tokenRef, status | — |
 | ChatIdentityLink | IdentityAccess | chatIdentityLinkId | platform, externalUserId, email, userId | User |
@@ -715,6 +811,7 @@ graph TD
 
 | Component | Dependency | Kind | Purpose |
 |---|---|---|---|
+| Tenancy | Relational database with row-level security | database | Organisations, operators, support log; separation of every organisation's data |
 | IdentityAccess | Established authentication library or identity service | third-party-api | Sign-in without custom auth |
 | IdentityAccess | Google Workspace and Microsoft Entra identity | third-party-api | Work-account single sign-on |
 | IdentityAccess, OrgSettings, KnowledgeGraph, ProposalWorkflow | Relational database (with full-text and vector search for KnowledgeGraph) | database | Persistent data |
@@ -731,6 +828,7 @@ graph TD
 
 | Component | Why it is a separate building block |
 |---|---|
+| Tenancy | Distinct lifecycle (organisations join, are suspended, are reactivated) and distinct actors (operators outside every organisation). Keeps identity about people within one organisation (Q5). |
 | IdentityAccess | Distinct concern (security). Every other component asks it; it changes when sign-in or roles change. |
 | OrgSettings | Distinct data with an Admin-only lifecycle; read rarely, changed rarely. |
 | AIGateway | Isolates the pluggable model choice (hosted or self-run) behind one interface, so no other component knows which model is used. |
@@ -752,8 +850,10 @@ graph TD
 - **Assessment inside proposals only (Q2):** Simulate, Ask and the editor preview would duplicate it.
 - **Per-channel answering (Q3):** answers and role checks would differ between channels.
 - **Ingestion and extraction as one component:** a model outage would stop syncing, and connections would be harder to add.
+- **Organisations inside IdentityAccess (Q5):** operators are not members of any organisation, and suspension and the support log have their own lifecycle; mixing them into identity would blur "who is this person" with "which customer is this".
 
 ## Assumptions & Open Questions
 
 - Which components are written in Rust is decided in a later stage. Candidates are KnowledgeGraph traversal and ImpactAssessment, where performance matters most.
 - The full search approach (full-text, vector or both) is detailed in functional design.
+- How operators sign in, whether support access needs an Admin's consent first, and per-organisation export and deletion are open in the requirements; Tenancy is where they land once decided.

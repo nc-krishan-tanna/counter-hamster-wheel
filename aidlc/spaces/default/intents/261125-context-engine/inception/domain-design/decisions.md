@@ -128,6 +128,35 @@ Inputs: `inception/requirements-analysis/requirements.md` (requirements), `incep
 **Alternatives Rejected:**
 - **IdentityAccess calls KnowledgeGraph directly:** this creates a dependency cycle risk and couples security to business data.
 
+## ADR-009: Organisations in one shared database, separated by row-level security, owned by Tenancy
+
+**Context:** The product is now also a hosted service for many organisations (requirements FR14, NFR14; stories Group 7). No organisation may see or change another's data through any path. Self-hosted installs run the same product with one organisation (FR14.6). The team chose a shared database with row-level security (requirements Q11) and a separate Tenancy component (Q5).
+
+**Decision:** A new Tenancy component owns organisations, operators, suspension and the support access log, and resolves the organisation for each request from the organisation's address. Every entity of every other component carries `organisationId`, and PostgreSQL row-level security on `organisationId` makes the database refuse cross-organisation reads and writes.
+
+**Consequences:**
+- Positive: one copy to run and upgrade; separation is enforced by the database even when code forgets a filter; self-hosted and hosted share one design.
+- Negative: every table, index and query carries `organisationId`; a mistake in setting the request's organisation on the database connection would be serious, so it is set in one place and tested on every route, tool and job (NFR14).
+- Security and compliance: a single region for all hosted data (NFR15); operator access to an organisation is always recorded and visible to its Admins (FR14.5).
+
+**Alternatives Rejected:**
+- **A schema or database per organisation:** stronger physical separation, but many copies to migrate and back up (requirements Q11).
+- **Organisations inside IdentityAccess:** mixes customers with people and leaves operators, who belong to no organisation, without a natural home (Q5).
+
+## ADR-010: Chat workspaces and connections belong to exactly one organisation
+
+**Context:** Slack and Teams questions arrive from a workspace, and connections read from a Google or Microsoft tenant or Slack workspace. With many organisations on one service, each inbound event must map to one organisation (stories review R-01 on US4.6).
+
+**Decision:** IdentityAccess links each Slack or Teams workspace to exactly one organisation (ChatWorkspaceLink); Ingestion binds each connection and its credentials to one organisation. A workspace or tenant already linked to another organisation is refused. Chat users are then matched by work email within that organisation only.
+
+**Consequences:**
+- Positive: every chat question and synced document has exactly one organisation, so the same email in two organisations is never ambiguous.
+- Negative: an organisation that genuinely shares a workspace with another cannot link it; it would need its own workspace.
+- Security: no answer or document can cross organisations through a shared workspace.
+
+**Alternatives Rejected:**
+- **Match the organisation from the chat user's email alone:** ambiguous when the same email has accounts in several organisations (FR14.2).
+
 ## Assumptions & Open Questions
 
 - Erasure requests under privacy laws (ADR-001) are handled by redacting within versions. The detailed design comes in functional design.

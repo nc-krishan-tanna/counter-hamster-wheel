@@ -48,13 +48,15 @@ X. Other (please specify)
 - Assessment: one shared risk and blast-radius block used by proposals, the editor preview, Ask and Simulate (Q2)
 - Answering: one shared, role-checked answering block (search plus AI answers) with thin adapters for the web app, Slack, Teams and MCP (Q3)
 - Item model: one item with a type plus a few type-specific fields, so links, history, approval and freshness work the same for every type (Q4)
+- Organisations: a new Tenancy building block owns organisations (name, address, status, region), operators and the support access log, and works out which organisation each request is for; every other component stamps its records with the organisation, and database row-level security enforces the separation (Q5)
+- Organisation boundaries carried into the other blocks: each Slack or Teams workspace and each connection belongs to exactly one organisation; accounts, settings, model configuration and jobs are per organisation (from requirements FR14, NFR14)
 
 Does this all look correct before I generate the artifact?
 
 - Looks correct
 - Request changes
 
-[Answer]:
+[Answer]: Looks correct
 
 ## Q5. [Architect] Where do organisations, operators and support access live?
 
@@ -64,4 +66,4 @@ A. A new building block, Tenancy, that owns organisations, operators and the sup
 B. Put organisations, operators and support access inside IdentityAccess
 X. Other (please specify)
 
-[Answer]:
+[Answer]: A
