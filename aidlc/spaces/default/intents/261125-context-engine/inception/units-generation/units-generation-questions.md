@@ -58,6 +58,8 @@ X. Other (please specify)
 - Deployment: modular monolith, meaning one main backend service, one background worker, the web app and the chat bot, each in its own container, with clear internal boundaries (Q3)
 - Parallel: units with no dependency between them can be built at the same time by the three tech leads (Q4)
 - First slice: write an item in a basic web page, the owner approves it, it is stored as a version and read back in the web page and through MCP, with a seeded sign-in, all from containers with CI (Q5)
+- Tenancy: folded into U2, which now holds IdentityAccess, OrgSettings and Tenancy (organisations, addresses, sign-up, suspension, operators, support access log) and grows from M to L; the new screens S14 to S18 are added to U19 (Q6)
+- Skeleton separation: U1 seeds two organisations, stamps its tables with the organisation, turns on row-level security, and its end-to-end check proves the second organisation cannot see the first one's item (Q7)
 
 Does this all look correct before I generate the artifact?
 
@@ -65,3 +67,23 @@ Does this all look correct before I generate the artifact?
 - Request changes
 
 [Answer]: Looks correct
+
+## Q6. [Architect] Which unit builds the new Tenancy building block?
+
+New on 2026-11-26 with the hosted service: Domain Design added Tenancy (organisations, their addresses, suspension, operators and the support access log; ADR-009), and the refined mockups added sign-up, organisation sign-in, the suspended notice, the support access log and the operator console (S14 to S18).
+
+A. A new unit, U21 u21-tenancy (service, M, in `api`): organisations and their addresses, finding the organisation for each request, sign-up, suspension and reactivation, operator accounts and the support access log; the screens S14 to S18 are added to U19, which already builds the change and admin screens (Recommended: one owner for the organisation lifecycle, the same way every other building block has its own unit)
+B. Fold Tenancy into U2 (identity and admin), which grows from M to L
+X. Other (please specify)
+
+[Answer]: B
+
+## Q7. [Tech lead] Does the walking skeleton (U1) already keep organisations apart?
+
+Every table in every unit now carries the organisation, and the database refuses cross-organisation access (ADR-009). U1 creates the first tables.
+
+A. Yes: U1 seeds two organisations, stamps its tables with the organisation, switches on row-level security, and its end-to-end check also proves that the second organisation cannot see the first one's item; the rest of Tenancy (sign-up, operators, suspension) comes in U21 (Recommended: adding separation to every table after the fact is slower and riskier than building it in from the first table)
+B. No: U1 stays single-organisation, and U21 adds the organisation to every table later
+X. Other (please specify)
+
+[Answer]: A

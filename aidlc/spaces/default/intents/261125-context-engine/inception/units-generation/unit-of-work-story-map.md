@@ -58,6 +58,13 @@ Every Unit named on a row implements part of that story and traces that story's 
 | US6.6 | U4; U19 | u4-ai-gateway; u19-web-change-admin | |
 | US6.7 | U19 | u19-web-change-admin | |
 | US6.8 | U20 | u20-release-packaging | interface |
+| US7.1 | U1; U2 | u1-walking-skeleton; u2-identity-admin | |
+| US7.2 | U2; U19 | u2-identity-admin; u19-web-change-admin | |
+| US7.3 | U2; U19 | u2-identity-admin; u19-web-change-admin | |
+| US7.4 | U2; U19 | u2-identity-admin; u19-web-change-admin | |
+| US7.5 | U2; U19 | u2-identity-admin; u19-web-change-admin | |
+| US7.6 | U2; U20 | u2-identity-admin; u20-release-packaging | |
+| US7.7 | U2; U19 | u2-identity-admin; u19-web-change-admin | |
 
 US6.8 is reached through an interface: operators install the published container images.
 
@@ -67,7 +74,8 @@ US6.8 is reached through an interface: operators install the published container
 - **Walking skeleton:** U1 delivers thin versions of US2.1, US2.4, US3.5 and US4.1. The later units on those rows finish them.
 - **Screens:** every screen in the mockups has a unit.
   - U18 builds S1, S2, S3, S6, S7, S8, S10 and the shell.
-  - U19 builds S4, S5, S9, S11, S12 and sign-in.
+  - U19 builds S4, S5, S9, S11, S12, sign-in and the hosted-service screens S14 to S18.
+- **Organisation separation (US7.1):** U1 builds it into the first tables and U2 extends it; every unit that adds a table, route, tool, job type or export also adds its row-level security policy and isolation test (NFR14).
   - U16 builds S13, the chat answers.
 
 ## Implementation order within units
