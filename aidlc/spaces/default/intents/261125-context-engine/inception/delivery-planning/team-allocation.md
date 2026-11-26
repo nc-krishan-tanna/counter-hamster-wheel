@@ -31,7 +31,7 @@ Which tech lead owns which Bolt is decided as each Bolt starts; this stage does 
 | B15 | U16 | AI developer agent | a tech lead | another tech lead |
 | B16 | U17 | AI developer agent | a tech lead | another tech lead |
 | B17 | U18 | AI developer agent | a tech lead | another tech lead |
-| B18 | U20 | AI developer agent | a tech lead; the sponsor chooses the licence | another tech lead |
+| B18 | U20 | AI developer agent | a tech lead; the sponsor chooses the licence, the hosting region and the hosted capacity target [Q8] | another tech lead |
 
 ## Working in parallel
 

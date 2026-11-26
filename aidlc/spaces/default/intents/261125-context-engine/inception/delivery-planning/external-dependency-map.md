@@ -2,7 +2,7 @@
 
 A **Bolt** is one build pass over a piece of the work that ends in something that runs (see `bolt-plan.md`). This map lists what the build needs from outside the code, who provides it, and which Bolt waits for it.
 
-Only one decision lies outside the team: the open-source licence [Q6]. Everything else is test accounts the tech leads create themselves, kept apart from any real organisation's data [Q5], per the project rule never to commit or use real organisation content.
+Two kinds of decision lie outside the team: the open-source licence [Q6], and, since the hosted service was added on 2026-11-26, the hosting region and capacity target before hosted sign-up opens [Q8]. Everything else is test accounts the tech leads create themselves, kept apart from any real organisation's data [Q5], per the project rule never to commit or use real organisation content.
 
 | Dependency | Owner | Lead time | Needed by | If it slips |
 |---|---|---|---|---|
@@ -13,12 +13,14 @@ Only one decision lies outside the team: the open-source licence [Q6]. Everythin
 | Slack test workspace and app | Tech leads [Q5] | Same day | B7 (Slack delivery), B12 (U12), B15 (U16) | Delivery to the web app and email still works |
 | Non-technical colleagues for the usability check | Tech leads [assumption] | About a week to arrange | B10 (U19) | Run the check on the next Bolt; do not skip it |
 | Open-source licence choice | Sponsor [Q6] | Not known | B18 (U20) public release | Release stays private; images are built but not published publicly |
+| Hosting region and provider for the hosted service (NFR15) | Sponsor [Q8] | Not known | B18 (U20): hosted sign-up opening | Hosted sign-up stays closed; the self-hosted release can still ship |
+| Hosted capacity target (requirements A8) and how operators sign in (contract C9 open question) | Sponsor and tech leads [Q8] | Not known | B4 (U2) for operator sign-in; B18 for capacity | Operator console stays team-only behind the private network until decided |
 
 ## Not needed for the build
 
 Admin consent in a real organisation (assumption A-3 in `ideation/feasibility/raid-log.md`, owned by the sponsor) matters for running the engine on real data, not for building it. The build uses test accounts only [Q5].
 
 ## Sources
-- Decisions: `delivery-planning-questions.md` Q5, Q6, Q7.
+- Decisions: `delivery-planning-questions.md` Q5, Q6, Q7, Q8.
 - Assumptions: `ideation/feasibility/raid-log.md`.
 - Bolt order: `bolt-plan.md`.

@@ -7,6 +7,7 @@ Decisions behind this plan (`delivery-planning-questions.md`):
 - One unit per Bolt; very small units that only make sense together are bundled [Q2].
 - One unit at a time: each unit goes through its design steps and its code, and a person checks it before the next starts [Q3]. Recorded as Construction Iteration `unit-major`, Execution `serial`.
 - The 6 open contract concerns are fixed in the design of the unit each one touches [Q4]; see "Contract concerns by Bolt" below.
+- Hosted service (2026-11-26): the order stays the same. Organisation separation is built in from B1; U2 (B4) brings organisations, sign-up, suspension, operators and support access; U19 (B10) the hosted screens. Sign-up opens to other organisations with the first public release (B18); until then the hosted copy is the team's own [Q8].
 
 Each Bolt merges into `main` as several small pull requests (branches live 1 to 2 days, another tech lead approves each one, squash-merged), and every merge deploys to our own live copy (`team-practices.md`). Every Bolt's Definition of Done also includes the team's standing rules: tests written first, at least 80% line coverage, lint and format checks passing, CI green.
 
@@ -47,9 +48,9 @@ graph LR
 ### B1: U1 walking skeleton (walking skeleton)
 - **Walking skeleton:** yes. The walking skeleton is the smallest working slice through every layer; it is built, checked end to end and approved by a person before any later unit starts (team Walking Skeleton practice).
 - **Proves:** repository layout, the `api`, `worker` and `web` containers, the local container setup and GitHub Actions CI; an item stored with append-only versions; a basic proposal approved by its owner; a basic web page; an MCP read tool; seeded sign-in.
-- **Definition of Done:** the end-to-end check passes from the containers: start them, create an item, approve it as its owner, read it in the page and through MCP. The job-queue library (contract C3) and the authentication library (contract C1) are chosen, because U1 and U2 depend on them (`contract-summary.md` open questions).
-- **Confidence hypothesis:** the four layers (store, approval, web, MCP) connect inside containers with CI enforcing the team's test and coverage rules.
-- **Expected demo:** a contributor writes an item, the owner approves it, and the approved item appears in the web page and in an AI agent's MCP read.
+- **Definition of Done:** the end-to-end check passes from the containers: start them, create an item, approve it as its owner, read it in the page and through MCP, then show the second seeded organisation cannot see it through the page or MCP. The job-queue library (contract C3) and the authentication library (contract C1) are chosen, because U1 and U2 depend on them (`contract-summary.md` open questions). U1 owns the single place that sets the organisation for each request and job, and the first isolation tests later units add to (Units Generation review R-01).
+- **Confidence hypothesis:** the four layers (store, approval, web, MCP) connect inside containers with CI enforcing the team's test and coverage rules, and row-level security keeps two organisations apart without slowing anything down.
+- **Expected demo:** a contributor writes an item, the owner approves it, and the approved item appears in the web page and in an AI agent's MCP read; the same calls as the second organisation return nothing.
 
 ### B2: U3 knowledge graph
 - **Proves:** one Item model with types, append-only versions, typed links, archive without delete, ownership and review data, graph traversal and text search.
@@ -65,10 +66,10 @@ graph LR
 - **Expected demo:** propose a change to a linked item and see its blast radius and risk; switch the model off and see the degraded result.
 
 ### B4: U2 identity and admin
-- **Proves:** sign-in through an established library (Google and Microsoft single sign-on, email and password), the four roles, service accounts, permission checks, chat-identity matching, user-deactivated events, and organisation settings.
-- **Definition of Done:** role checks are enforced on the server for every request (NFR5); seeded sign-in from U1 is replaced; CSRF and origin rules for the session cookie across `web` and `api` are defined (review finding R-06).
-- **Confidence hypothesis:** an off-the-shelf authentication library covers every sign-in method without custom password storage.
-- **Expected demo:** sign in with each method, see what each role may do, deactivate a user and see their items become unowned.
+- **Proves:** sign-in through an established library (Google and Microsoft single sign-on, email and password) at the organisation's own address, the four roles, service accounts, permission checks, chat-identity matching and workspace linking, user-deactivated events, and organisation settings; and Tenancy: organisations and their addresses, sign-up, suspension and reactivation, operator accounts, the operator API (C9) and read-only support sessions.
+- **Definition of Done:** role checks are enforced on the server for every request (NFR5); seeded sign-in from U1 is replaced; CSRF and origin rules for the session cookie across `web` and `api` are defined (review finding R-06); the same email can sign in to two organisations as two accounts; a suspended organisation is refused everywhere; every support read writes its log entry first (FR14.5); the isolation tests cover every U2 route.
+- **Confidence hypothesis:** an off-the-shelf authentication library covers every sign-in method without custom password storage, and organisations stay apart through sign-up, suspension and support access.
+- **Expected demo:** sign up a new organisation, sign in with each method, see what each role may do, deactivate a user and see their items become unowned; suspend the organisation from the operator console and see its people refused, then open a support session and see the entry in the Admin's support access log.
 
 ### B5: U8 ingestion framework + U13 ChatGPT connector (bundled)
 - **Why bundled:** U13 is small, and it is the first connector to exercise U8's connection contract; building it here answers the ChatGPT question early (risk R-3, assumption A-2).
@@ -102,7 +103,7 @@ graph LR
 - **Expected demo:** save a meeting transcript in Google, and within 5 minutes see a proposal with an excerpt and a link back to the source.
 
 ### B10: U19 change and admin screens
-- **Proves:** Reviews and proposal detail with the blast-radius panel, the editor with @-linking and live impact preview, Settings (connections and uploads, people and roles, privacy, AI model, brand), notification settings, first-run setup and sign-in, with narrow-screen layouts.
+- **Proves:** Reviews and proposal detail with the blast-radius panel, the editor with @-linking and live impact preview, Settings (connections and uploads, people and roles, privacy, AI model, brand), notification settings, first-run setup and sign-in, the hosted screens (S14 sign-up, S15 sign-in at the organisation's address, S16 suspended, S17 support access log, S18 operator console), with narrow-screen layouts.
 - **Definition of Done:** WCAG 2.1 AA (NFR7) and 320 px layouts (NFR8) are met; the approval and editing screens are tried by non-technical people, and what they struggle with is fixed or logged [Q7] [assumption: usability sessions with non-technical colleagues are how the team checks this]; dead letters can be listed, retried and discarded from Settings.
 - **Confidence hypothesis:** non-technical people can approve and edit knowledge without help (risk R-5).
 - **Expected demo:** a non-technical colleague reviews a proposal, reads its impact and approves it, unaided.
@@ -151,9 +152,9 @@ graph LR
 
 ### B18: U20 release packaging
 - **Proves:** production images for all four containers, documented install configuration, health checks, a load check at 100-person scale with a second `api` copy, the version-tag release workflow, README and licence placeholder.
-- **Definition of Done:** the load check passes at 100-person scale (NFR4); every service has a health check (NFR13); a version tag publishes the images to GitHub Container Registry; the sponsor has chosen the licence before the public release.
-- **Confidence hypothesis:** another organisation can install and run the engine from our published images.
-- **Expected demo:** install from the published images on a fresh host, run the health checks and the load check.
+- **Definition of Done:** the load check passes at 100-person scale (NFR4); every service has a health check (NFR13); a version tag publishes the images to GitHub Container Registry; the sponsor has chosen the licence before the public release. Before hosted sign-up opens [Q8]: every unit's isolation tests pass (NFR14), the hosting region is chosen and named publicly, with backups kept there (NFR15), and the hosted service's capacity target is set and checked (requirements A8).
+- **Confidence hypothesis:** another organisation can install and run the engine from our published images, and outside organisations can safely sign up to the hosted service.
+- **Expected demo:** install from the published images on a fresh host, run the health checks and the load check; sign up a new organisation on the hosted service.
 
 ## Contract concerns by Bolt [Q4]
 
@@ -170,7 +171,7 @@ graph LR
 - Units and their order: `inception/units-generation/unit-of-work.md`, `unit-of-work-dependency.md`.
 - Building blocks each unit implements (named in each Bolt's "Proves" line): `inception/domain-design/components.md`.
 - Contracts and review findings: `inception/contract-design/contract-summary.md`, `inception/contract-design/reviews/review-01.md`.
-- Quality targets: `inception/requirements-analysis/requirements.md` (NFR1 to NFR13).
+- Quality targets: `inception/requirements-analysis/requirements.md` (NFR1 to NFR15; FR14 for the hosted service).
 - Risks and assumptions: `ideation/feasibility/raid-log.md`.
 - Team practices: `inception/practices-discovery/team-practices.md`.
-- Decisions: `delivery-planning-questions.md` Q1 to Q7.
+- Decisions: `delivery-planning-questions.md` Q1 to Q8.
