@@ -30,9 +30,10 @@ graph LR
     WRK -- "connector C4" --> SRC[Google, Microsoft, Slack, ChatGPT]
     WRK -- "delivery" --> CHAN[Slack, Teams, email]
     SLACKIN[Slack and Teams events] -- "webhooks C6" --> BOT
+    OPS[Operator console in web: U19] -- "operator API C9" --> API
 ```
 
-<!-- Text fallback: The web container, the chatbot container, the worker and other tools all call the api container over the public REST API /v1. AI agents call the api over MCP. The api and the worker pass background work to each other through the job queue kept in the main database; the worker only touches the database for the job queue, and reads and writes knowledge through the REST API. Both the api and the worker reach the AI model through the AI adapter (C5). The worker reads source tools through connectors (C4) and delivers notifications to Slack, Teams and email. Slack and Teams send chat events to the chatbot through webhooks (C6). -->
+<!-- Text fallback: The web container, the chatbot container, the worker and other tools all call the api container over the public REST API /v1. AI agents call the api over MCP. The api and the worker pass background work to each other through the job queue kept in the main database; the worker only touches the database for the job queue, and reads and writes knowledge through the REST API. Both the api and the worker reach the AI model through the AI adapter (C5). The worker reads source tools through connectors (C4) and delivers notifications to Slack, Teams and email. Slack and Teams send chat events to the chatbot through webhooks (C6). The operator console calls the api over the separate operator API (C9). -->
 
 ## Contracts
 
@@ -46,6 +47,19 @@ graph LR
 | C6 | U16 | External: Slack and Microsoft Teams (inbound events) | Platform webhooks / events, verified by signature | U16 (adapter); the platforms own the payloads |
 | C7 | U3, U5, U2 (in-process providers) | U6, U7, U14, U17 (same container) | In-process module interfaces | Provider unit of each interface |
 | C8 | Every container (U1 creates; U20 hardens) | External: container host, CI deploy check, monitoring | HTTP health and metrics endpoints | U1, then U20 |
+| C9 | U2 (Tenancy, in `api`) | U19 (operator console, S18) | Internal REST/HTTP JSON at the operator address, not part of `/v1` | U2 |
+
+**Organisations in every contract (added 2026-11-26; requirements FR14, NFR14; domain design ADR-009, ADR-010; mockups Q6).** Each organisation is served at its own address, `https://{org}.<service>` on the hosted service (a self-hosted install has one address and one organisation). A session or service-account token belongs to exactly one organisation; a call whose address and credential name different organisations is refused with `404 not-found`, so it reveals nothing about the other organisation. A call for a suspended organisation is refused with `403 organisation-suspended`, before authentication, so the sign-in page can show the suspended notice. Every job carries its organisation. The organisation never appears as a path or body field a caller can set: it comes from the address and the credential.
+
+Three kinds of caller are not tied to one organisation's address, and each has one defined way in:
+
+| Caller | Address | Credential | How the organisation is known |
+|---|---|---|---|
+| A visitor signing up (hosted only) | The bare service address (no organisation part) | None | The organisation is created by `POST /signup`, which is the only operation served there besides the sign-up page |
+| `worker` and `chatbot` | The `api` internal address on the private network; Caddy never routes it | One system credential per container, from the secret store | Named in the `X-Organisation-Id` header, accepted only on the internal address; the `api` checks the organisation exists and is active, then sets it on the database connection exactly as for any other request |
+| Operators | The operator console's own address (C9) | Operator session | Named in the C9 path; reads write the support log first |
+
+The cross-organisation lookups that must run before an organisation is known (chat workspace to organisation, the "already linked elsewhere" check, listing active organisations for the scheduler, the job queue's `take`) run under one privileged database role, `ce_system`, used only inside U2's Tenancy interface and U1's job runner. Every other query runs with an organisation set (decision for U1 and U2; closes domain design review R-01).
 
 ### C1 Public REST API `/v1`
 
@@ -61,6 +75,7 @@ info:
     notifications, connections and settings. Errors use RFC 9457 problem details.
 servers:
   - url: https://{host}/v1
+    description: "Hosted service: host is {org}.<service address>, the organisation's own address. Self-hosted: the install's single address."
     variables:
       host: { default: localhost:8080 }
 security:
@@ -68,6 +83,7 @@ security:
   - serviceToken: []
 tags:
   - { name: identity, description: "Owner: U2. Users, roles, service accounts, chat identities" }
+  - { name: organisation, description: "Owner: U2 (Tenancy). The current organisation, hosted sign-up, support access log" }
   - { name: settings, description: "Owner: U2 (OrgSettings) and U4 (AI model)" }
   - { name: items, description: "Owner: U3. Items, versions, links, history, graph" }
   - { name: proposals, description: "Owner: U6. Drafts, proposals, decisions, gap requests" }
@@ -79,6 +95,26 @@ tags:
 paths:
   /me:
     get: { tags: [identity], summary: Current user or service account and role, operationId: getMe }
+  /organisation:
+    get: { tags: [organisation], summary: "The current organisation: name, address, status, hosting region", operationId: getOrganisation }
+  /organisation/public:
+    get: { tags: [organisation], summary: "Unauthenticated: the organisation's name and status for the sign-in and suspended pages (S15, S16)", operationId: getOrganisationPublic, security: [] }
+  /signup:
+    post:
+      tags: [organisation]
+      summary: "Hosted service only, served at the bare service address: create an organisation, its first Admin, its default settings and its extraction service account, all in one transaction (nothing is kept if any part fails). 404 on a self-hosted install."
+      operationId: signUp
+      security: []
+      parameters: [ { $ref: "#/components/parameters/idempotencyKey" } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [organisationName, address, adminName, adminEmail], properties: { organisationName: { type: string, minLength: 1, maxLength: 120 }, address: { type: string, pattern: "^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$" }, adminName: { type: string }, adminEmail: { type: string, format: email } } } } }
+      responses:
+        "201": { description: "Created; body has organisationId and the new organisation's URL; the Admin finishes sign-in there through the authentication library (password or Google or Microsoft), and the email is verified before first sign-in" }
+        "409": { $ref: "#/components/responses/Problem" }
+        "422": { $ref: "#/components/responses/Problem" }
+  /organisation/support-access:
+    get: { tags: [organisation], summary: "Support access log, read-only (Admin); hosted service only", operationId: listSupportAccess, parameters: [ { $ref: "#/components/parameters/cursor" }, { $ref: "#/components/parameters/limit" } ] }
   /users:
     get: { tags: [identity], summary: List users (Admin), operationId: listUsers, parameters: [ { $ref: "#/components/parameters/cursor" }, { $ref: "#/components/parameters/limit" } ] }
   /users/{userId}:
@@ -214,7 +250,7 @@ components:
         status: { type: integer }
         detail: { type: string }
         instance: { type: string }
-        code: { type: string, enum: [unauthenticated, forbidden, not-found, validation-failed, reason-required, proposal-out-of-date, already-decided, not-an-approver, conflict, rate-limited, ai-unavailable, dependency-unavailable, internal] }
+        code: { type: string, enum: [unauthenticated, forbidden, not-found, validation-failed, reason-required, proposal-out-of-date, already-decided, not-an-approver, conflict, rate-limited, ai-unavailable, dependency-unavailable, organisation-suspended, address-taken, address-reserved, internal] }
         errors: { type: array, items: { type: object, properties: { field: { type: string }, message: { type: string } } } }
     ItemType: { type: string, enum: [rule, process, glossary-term, person, team, system, decision] }
     Item:
@@ -291,13 +327,14 @@ components:
 - **Timeouts and retries (Q5).** Callers time out API calls at 10 seconds, and calls that wait on the AI model (`/query/answers`, `/conversations/*`, `/assessments`, `/sandboxes/*/scenarios`) at 30 seconds. Up to 3 retries with exponential backoff and jitter (0.5 s, 1 s, 2 s), only for `GET`, `PUT`, `DELETE` and for `POST` calls that carry an `Idempotency-Key`, and only on network errors, `429`, `502`, `503` and `504`. `429` and `503` carry `Retry-After`, which callers respect.
 - **Idempotency (Q5).** `POST /proposals`, `POST /gap-requests` and `POST /uploads` require `Idempotency-Key`. Extraction uses the source document id plus content hash as the key, which backs FR6.3 (no duplicate proposal).
 - **One decision only (FR3.5, U6).** A decision sends `If-Match` with the proposal's ETag. A second decision by the same owner returns `409 already-decided`; a stale ETag returns `412`; a proposal whose base changed returns `409 proposal-out-of-date` until the decider names `winningVersionId`.
-- **Authentication and roles (FR11, NFR5).** Browsers use the session cookie issued by U2's authentication library. `chatbot`, `worker`, MCP agents and other tools use service-account bearer tokens. The server checks the role on every request. The `chatbot` acts for the matched person by sending `X-Acting-Chat-Identity: <platform>:<externalUserId>`; `api` accepts that header only from the chat service account, resolves it to a user through the chat identity link, and applies that user's role. An unmatched identity gets `403 forbidden`.
-- **Worker access.** The worker reads and writes knowledge only through this API, under an extraction service account with the Contributor role, so extracted proposals go through the same checks as every other proposal. It touches the database directly only for the job queue (C3).
+- **Authentication and roles (FR11, NFR5).** Browsers use the session cookie issued by U2's authentication library. `chatbot`, `worker`, MCP agents and other tools use service-account bearer tokens. The server checks the role on every request. The `chatbot` acts for the matched person by sending `X-Acting-Chat-Identity: <platform>:<workspaceId>:<externalUserId>`; `api` accepts that header only from the chatbot's system credential on the internal address, finds the organisation from the workspace link (ADR-010), checks it matches `X-Organisation-Id`, resolves the user through that organisation's chat identity links, and applies that user's role. An unmatched identity gets `403 forbidden`.
+- **Organisations.** The organisation comes from the address and the credential (or, for `worker` and `chatbot` on the internal address, `X-Organisation-Id`), never from a parameter. A mismatch returns `404 not-found`; a suspended organisation returns `403 organisation-suspended`. Every C1 route, every C2 tool, every C3 job type, every search and every export has an isolation test that acts as organisation B on organisation A's data and expects nothing back and nothing changed (NFR14); a new route, tool or job type without one fails CI. Idempotency keys, ETags and cursors are scoped to the organisation: the same key in two organisations never collides. `/signup` (409 `address-taken`, 422 `address-reserved` or `validation-failed`) and `/organisation/support-access` exist only on the hosted service.
+- **Worker access.** The worker reads and writes knowledge only through this API, on the internal address with its system credential and `X-Organisation-Id` set to the job's organisation. It acts as that organisation's extraction service account (Contributor role, created with the organisation at sign-up or first run), so extracted proposals go through the same checks as every other proposal. It touches the database directly only for the job queue (C3).
 - **Pagination.** Cursor-based (`cursor`, `limit`, `nextCursor`).
 
 ### C2 MCP server
 
-AI agents use MCP, served by U15 inside `api` at `/mcp` (Streamable HTTP). Each agent authenticates with a service-account bearer token; the account's role limits every tool, and Readers cannot propose (FR7.4, FR11.5). MCP tools are thin wrappers over C1 operations, so the rules above (errors, idempotency, role checks) apply unchanged.
+AI agents use MCP, served by U15 inside `api` at `/mcp` on the organisation's own address (Streamable HTTP). Each agent authenticates with a service-account bearer token that belongs to one organisation; the account's role limits every tool, and Readers cannot propose (FR7.4, FR11.5). A token used at another organisation's address, or for a suspended organisation, is refused (`isError` with `not-found` or `organisation-suspended`). MCP tools are thin wrappers over C1 operations, so the rules above (errors, idempotency, role checks) apply unchanged.
 
 ```yaml
 mcp:
@@ -339,16 +376,17 @@ shared-schema:
   name: JobQueue
   owner: u1-walking-skeleton
   operations:
-    enqueue: { input: "type, payload, idempotencyKey?, runAfter?, transaction?", output: jobId, note: "inside the caller's database transaction when given" }
+    enqueue: { input: "type, payload, idempotencyKey?, runAfter?, transaction?", output: jobId, note: "inside the caller's database transaction when given; the job's organisation is the one set on the connection, and enqueue fails when none is set" }
     take: { input: "types[], batchSize", output: "jobs[]", note: "lease-based; safe with several worker copies" }
     complete: { input: jobId }
     fail: { input: "jobId, error, retryable (boolean)", note: "retryable failures back off; non-retryable failures count as an attempt" }
     defer: { input: "jobId, until, reason", note: "for outages: re-schedules without using up an attempt" }
-    deadLetters: { input: "type?, cursor", output: "DeadLetter[]" }
-    retryDeadLetter: { input: deadLetterId }
-    discardDeadLetter: { input: "deadLetterId, reason" }
+    deadLetters: { input: "type?, cursor", output: "DeadLetter[]", note: "only the current organisation's dead letters" }
+    retryDeadLetter: { input: deadLetterId, note: "current organisation only" }
+    discardDeadLetter: { input: "deadLetterId, reason", note: "current organisation only" }
   job:
     jobId: string
+    organisationId: "string; required; the handler runs with this organisation set on its database connection and skips the job (completes it without work) while the organisation is suspended"
     type: string
     version: integer
     payload: object
@@ -371,6 +409,7 @@ shared-schema:
     alert: "dead-letter count per job type is a metric; above zero raises an alert (NFR13)"
     admin: "Admins see dead letters per connection or job type, and retry or discard them; each action is recorded"
     handlers: "must be idempotent: a job can run more than once"
+    organisations: "every job belongs to one organisation (job.organisationId); scheduled work (connection.sync, freshness.daily-check) is enqueued once per active organisation by a scheduler that lists organisations through U2's Tenancy interface; payloads never carry another organisation's ids"
 ```
 
 **Job types:**
@@ -483,7 +522,7 @@ shared-schema:
   owner: u4-ai-gateway
   operations:
     complete:
-      input: "task (extract | answer | summarise | contradiction | scenario | draft), prompt, outputSchema?, timeoutMs (default 30000)"
+      input: "task (extract | answer | summarise | contradiction | scenario | draft), prompt, outputSchema?, timeoutMs (default 30000); the model settings and key used are always the current organisation's (FR12.3)"
       output: "Result"
     testConnection: { output: "ok | error(code, message)" }
   Result:
@@ -511,7 +550,8 @@ inbound:
   teams: { mechanism: "Bot Framework activities over HTTPS", verification: "Bot Framework JWT" }
 rules:
   - "acknowledge within the platform's limit (Slack 3 seconds), then answer asynchronously in the thread"
-  - "call C1 /v1/query/answers with X-Acting-Chat-Identity; never cache answers across users"
+  - "call C1 /v1/query/answers on the api internal address with the chatbot system credential, X-Organisation-Id (from the workspace link) and X-Acting-Chat-Identity <platform>:<workspaceId>:<externalUserId>; never cache answers across users or organisations"
+  - "an event from a workspace linked to no organisation, or to a suspended one, gets a reply that the workspace is not connected or not available; no knowledge is returned"
   - "unmatched user: reply that they need an invite; no knowledge returned (components: ChatAssistant)"
   - "api unreachable or 30-second timeout: reply that the engine is unavailable (U16)"
   - "replies show the answer, owner, last reviewed date when stale, and a link to the item (FR8)"
@@ -547,6 +587,7 @@ shared-schema:
     owner: u2-identity-admin
     consumer: "every unit in api"
     operations:
+      organisation: "request (address, credential) -> organisationId | not-found | suspended; sets the organisation on the request's database connection (U1 provides the first, seeded version)"
       check: "principal, action, resource -> allow | deny(reason)"
       approvers: "-> userIds with Approver or Admin role"
       resolveChatIdentity: "platform, externalUserId -> userId or none"
@@ -579,14 +620,42 @@ paths:
 
 The AI model and connections are deliberately not part of readiness: a failing model or connection must not take the service down (NFR10).
 
+### C9 Operator API (U2 to U19's operator console)
+
+Not part of the public `/v1` API and not served at any organisation's address. Only operator accounts can call it, and only on the hosted service. It follows the C1 rules for errors (problem details), cursor pagination and timeouts. Operators read an organisation's knowledge only here, read-only (Q6): opening support access records the reason, and every read writes its own support log entry (operator, time, item opened, reason) in the same transaction before anything is returned, so a read that cannot be logged returns nothing.
+
+```yaml
+openapi: 3.1.0
+info: { title: Operator API, version: 1.0.0, description: "Internal; served at the operator console's own address; hosted service only" }
+security:
+  - operatorSession: []
+paths:
+  /organisations:
+    get: { summary: "List organisations with people, items, storage and status; search by name or address; cursor-paged", operationId: listOrganisations, parameters: [ { name: q, in: query, schema: { type: string } }, { name: cursor, in: query, schema: { type: string } }, { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } } ] }
+  /organisations/{organisationId}/suspension:
+    put: { summary: "Suspend; body { reason }; idempotent: suspending a suspended organisation changes nothing; recorded as a status change", operationId: suspendOrganisation }
+    delete: { summary: "Reactivate; body { reason }; idempotent; recorded as a status change", operationId: reactivateOrganisation }
+  /organisations/{organisationId}/support-sessions:
+    post: { summary: "Open support access; body { reason } (required); returns supportSessionId; valid for 1 hour", operationId: openSupportSession }
+  /support-sessions/{supportSessionId}/items:
+    get: { summary: "Read-only search of the organisation's approved items; logs one entry naming the search", operationId: supportSearchItems }
+  /support-sessions/{supportSessionId}/items/{itemId}:
+    get: { summary: "Read-only item with links and sources; logs one entry naming the item before returning it", operationId: supportGetItem }
+  /support-sessions/{supportSessionId}/items/{itemId}/versions:
+    get: { summary: "Read-only history; logs one entry naming the item's history before returning it", operationId: supportGetItemVersions }
+components:
+  securitySchemes:
+    operatorSession: { type: apiKey, in: cookie, name: operator_session, description: "Operator sign-in; separate from every organisation's sessions; how operators sign in is an open question" }
+```
+
 ## Contract ownership rules
 
-- **Who owns what.** The provider unit owns its contract and its part of the spec file. For C1, each tag's owner (listed on the tag) owns those paths and schemas; U1 owns the shared parts (problem format, pagination, security schemes, idempotency). For C3, U1 owns the job interface and each publisher owns its job type's payload.
+- **Who owns what.** The provider unit owns its contract and its part of the spec file. For C1, each tag's owner (listed on the tag) owns those paths and schemas; U1 owns the shared parts (problem format, pagination, security schemes, idempotency). For C3, U1 owns the job interface and each publisher owns its job type's payload. U2 owns C9, the operator API.
 - **Spec first.** A change to C1, C2 or a C3 job type starts as a change to the spec in the same pull request as the code. CI checks routes against the OpenAPI file and fails on a breaking change inside `/v1` (an OpenAPI diff check).
 - **Additive changes are safe.** New optional fields, paths, tools, job types and enum values need only the owner's review. Consumers ignore unknown fields and unknown job types.
 - **Breaking changes are agreed.** They need a new major version (`/v2`, a new tool name, or a new job `version`), approval from a tech lead of every consuming unit in the pull request, and the old version kept for at least one release (Q3).
 - **In-process interfaces (C4, C5, C7).** Changing them is a code change reviewed by the owner and the consumers' tech leads; the TypeScript compiler and the module-boundary lint rule catch breaks.
-- **Contract tests.** Each consumer keeps tests against the spec (C1, C2, C3 payloads), written before the code per the team's tests-first practice, and each provider runs them in CI.
+- **Contract tests.** Each consumer keeps tests against the spec (C1, C2, C3 payloads, C9), written before the code per the team's tests-first practice, and each provider runs them in CI.
 
 ## Open questions
 
@@ -598,13 +667,14 @@ The AI model and connections are deliberately not part of readiness: a failing m
 | C1 | Rate limits for the public API (per token, per minute). Set in NFR design. | U20 |
 | C4 | Whether ChatGPT projects offer automated access; if not, U13 uses file import only (requirements A6). | U13 |
 | C6 | Whether Socket Mode (no public inbound URL) is the default for Slack in self-hosted installs. | U16 |
-
+| C9 | How operators sign in (which identity provider, second factor), and whether support access needs the organisation Admin's consent first (requirements Open questions). | U2, U19 |
 ## Sources
 
 - Initial description: see `<record>/project-description.json`.
 - `inception/units-generation/unit-of-work.md`: containers, units and their responsibilities.
 - `inception/units-generation/unit-of-work-dependency.md`: the DAG and the integration points table this document formalises.
 - `inception/domain-design/components.md`: entity shapes, interaction styles (sync, async, event) and failure behaviour.
-- `inception/requirements-analysis/requirements.md`: FR1 to FR13 and NFR1 to NFR13.
+- `inception/requirements-analysis/requirements.md`: FR1 to FR14 and NFR1 to NFR15.
+- `inception/domain-design/decisions.md` ADR-009 and ADR-010, and `inception/refined-mockups/refined-mockups-questions.md` Q6: organisations, their addresses and workspace binding (2026-11-26).
 - `contract-design-questions.md`: Q1 REST with OpenAPI; Q2 public documented API; Q3 path versioning, additive only; Q4 job queue in the main database behind a swappable interface, with a dead-letter queue; Q5 problem details, timeouts, retries and idempotency.
 - Project rule (project.md, Corrections): use established, proven libraries.
