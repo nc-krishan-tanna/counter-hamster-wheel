@@ -89,8 +89,20 @@ Does this all look correct before I generate the artifact?
 - Outside accounts: the tech leads create free or trial test accounts themselves, kept apart from any real organisation's data.
 - Outside blockers: none apart from the open-source licence, which the sponsor chooses before the first public release (U20).
 - Biggest worry: non-technical people finding approvals and editing easy, so the approval and editing screens get early usability checks with real non-technical users.
+- Hosted service (2026-11-26): the build order stays the same; U1 (B1) proves two organisations are kept apart, U2 (B4) brings organisations, sign-up, suspension, operators and support access, and U19 (B10) the hosted screens. Sign-up opens to other organisations with the first public release (B18), once every unit has its isolation tests, the hosting region is chosen and the load check passes; until then the hosted copy is the team's own (Q8).
 
 - Looks correct
 - Request changes
 
 [Answer]: Looks correct
+
+## Q8. [Sponsor] When does the hosted service open to other organisations?
+
+New on 2026-11-26: the product is also a hosted service the team runs for many organisations (requirements FR14). The units now build it (U2 holds organisations, sign-up, suspension and operators; U1 keeps organisations apart from its first tables; U19 builds the sign-up and operator screens). What is still open is when outside organisations can sign up, which decides what must be true before then (a hosting region chosen, the isolation tests in every unit, a capacity check).
+
+A. With the first public release (B18, U20): sign-up opens once every unit has its isolation tests, the hosting region is chosen and the load check passes; until then the hosted copy is the team's own (Recommended: nothing customer-facing ships before separation is proven everywhere)
+B. Earlier, invite-only for a few pilot organisations as soon as U2 (B4) lands
+C. Later, after the first self-hosted release
+X. Other (please specify)
+
+[Answer]: A

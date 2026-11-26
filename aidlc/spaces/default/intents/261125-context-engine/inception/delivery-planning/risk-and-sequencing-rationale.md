@@ -17,6 +17,7 @@ Why risk first: the risk log rates "the first version slips" (R-1) and "extracte
 | R-4 extracted knowledge is wrong | B3, B9 | The AI gateway and assessment come early (B3); B9 measures extraction against the 5-minute target with a real Google connection |
 | R-5 non-technical people find it hard | B10 | The change and approval screens come straight after extraction, with a usability check by non-technical colleagues [Q7] |
 | A-1 tool permissions with admin consent | B6, B11, B12 | Each connector's Definition of Done includes consent on a test account |
+| One organisation sees another's data on the hosted service (new, 2026-11-26; NFR14) | B1, B4, every Bolt, B18 | Separation is built into U1's first tables and proved in the skeleton's check; U2 extends it; every unit adds isolation tests; hosted sign-up opens only at B18 once they all pass [Q8] |
 
 ## Why this order is valid
 
@@ -50,9 +51,10 @@ No Bolt is built before something it needs. This is one of several valid orders;
 - **Extraction cannot come straight after the skeleton.** U9 needs the proposal workflow (U6), which needs identity, the knowledge graph, assessment and notifications. "Riskiest first" therefore means the AI parts come as early as their dependencies allow: the AI gateway in B3, the ChatGPT check in B5, one real connection in B6, extraction in B9. Alternative considered: a throwaway extraction spike right after U1. Rejected because it would bypass the approval flow the team wants every extracted item to go through, and the team's practice is to extend the skeleton's code, not throw it away.
 - **The Microsoft and Slack connectors (B11, B12) come after the approval screens (B10).** The team named approval usability as its worry, not connector consent [Q7], and one real connection (Google, B6) is enough to prove extraction. Alternative considered: all four connectors before extraction. Rejected because it delays the extraction check and the usability check by several weeks.
 - **Bundles are limited to two** [Q2]: U4 with its first user U5, and U8 with its first connector U13. Every other Bolt is one unit, so each has one owner and one done-check.
+- **The hosted service does not change the order** [Q8]. Separation is cheapest built in from the first table (B1), Tenancy rides with identity in U2 (B4), and its screens with the other admin screens (B10). Alternative considered: opening invite-only pilots straight after B4. Rejected because isolation would be proven only for the units built so far.
 - **The explore screens (B17) come late.** They need Ask (U14) and simulation (U17), and their main risk, map performance (NFR3), was not named as a worry [Q7].
 
 ## Sources
 - Risks and assumptions: `ideation/feasibility/raid-log.md`.
 - Dependencies: `inception/units-generation/unit-of-work-dependency.md`.
-- Decisions: `delivery-planning-questions.md` Q1, Q2, Q7.
+- Decisions: `delivery-planning-questions.md` Q1, Q2, Q7, Q8.
