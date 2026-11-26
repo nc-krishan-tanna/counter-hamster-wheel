@@ -11,6 +11,8 @@ NFR13 in `inception/requirements-analysis/requirements.md`: each service has a h
 | NFR13.3 | `/metrics` publishes request count and errors by route and status, the latency histogram (performance NFR2.1), job-queue depth and oldest waiting job age per type, job attempts, and dead-letter count per type | Test: each metric name is present after the W7 check (`functional-spec.md`) |
 | NFR13.4 | Proposal decision time is measurable: a histogram of time from proposal created to decided, by outcome (`rules.md` BR2.3, BR2.5) | Test: after W7 the histogram has a sample |
 
+The organisation is never a metric label (it would grow without bound on the hosted service); logs carry the organisation's id only, never its name (NFR6).
+
 ## SLIs (measured, no targets in U1)
 
 | SLI | From |

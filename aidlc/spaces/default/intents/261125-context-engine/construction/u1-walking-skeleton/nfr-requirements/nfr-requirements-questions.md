@@ -125,10 +125,11 @@ X. Other (please specify)
 - Q7 HTTPS: Caddy serves HTTPS in front of `web` and `api` (local certificate on a developer machine); container-to-container traffic stays on the private network.
 - Q8 and Q10 Speed: U1 sets no speed targets and only measures request latency; NFR1, NFR2 and NFR3 stay in the MVP and are checked in their own units.
 - Q9 Observability: structured JSON logs with a request id and no content, plus Prometheus metrics (requests, errors, latency, queue depth, dead letters); tracing later.
+- Organisations (added 2026-11-26 from requirements NFR14 and NFR15, the updated functional design BR6.1 to BR6.3 and the contracts; no new question needed): every U1 table has PostgreSQL row-level security on the organisation, and the `api` database role can never bypass it; the organisation is set once per request from the address and credential; every U1 route and MCP tool has an isolation test acting as the second organisation; organisation is a label on no metric and appears in logs only as its id. The hosting region (NFR15) is not a U1 concern; it is settled before hosted sign-up opens (U20).
 
 Does this all look correct before I generate the artifact?
 
 - Looks correct
 - Request changes
 
-[Answer]:
+[Answer]: Looks correct

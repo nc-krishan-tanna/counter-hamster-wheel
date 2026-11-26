@@ -28,10 +28,11 @@ X. Other (please specify)
 - Q1 Cross-site writes: a server check refuses cookie-signed POST, PUT, PATCH and DELETE requests whose Origin is not our own address (403); bearer-token agent calls are unaffected; U2 keeps the rest of the CSRF work.
 - Q2 Worker: the worker starts, connects to the job queue and reports healthy; tests with a test-only job type prove enqueue-in-transaction, retry and dead letters; no production job type in U1.
 - Fixed in the design without a question (from the requirements review): a full per-table database grant list with a separate migration role; health and metrics endpoints of api and worker not routed through Caddy; the seeded agent token hashed with Better Auth's own method at seed time; traceability marked partial where U1 covers only part of a requirement.
+- Organisations (added 2026-11-26 from the updated NFR requirements NFR14.1 to NFR14.3; no new question needed): the api finds the organisation from the address (`acme.localhost`, `globex.localhost` in U1) before anything else and refuses a credential from another organisation with "not found"; every knowledge query runs in a transaction that first sets the organisation (`SET LOCAL app.organisation_id`), and each knowledge table has a row-level security policy on that setting; the sign-in cookie is tied to the organisation's own address (no shared parent domain), and the Origin check compares against that address rather than one fixed origin; the seed creates the two organisations, each with its own contributor, owner and agent token from the environment; an isolation test per route and MCP tool, plus a CI check that lists routes and tools and fails when one has no isolation test.
 
 Does this all look correct before I generate the artifact?
 
 - Looks correct
 - Request changes
 
-[Answer]: Looks correct
+[Answer]:

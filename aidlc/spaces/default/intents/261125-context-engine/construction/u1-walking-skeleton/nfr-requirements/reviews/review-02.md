@@ -1,0 +1,40 @@
+## Review
+
+**Verdict:** NOT-READY
+**Reviewer:** aidlc-architecture-reviewer-agent
+**Date:** 2026-11-26T15:30:48Z
+**Iteration:** 1
+**Verdict Dictated:** no
+
+### Findings
+
+| ID | Severity | Location | Finding | Required action | Status |
+|---|---|---|---|---|---|
+| R-01 | Major | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/security-requirements.md > NFR9.2 | The grant list says `api` may update only `proposals.status` and `links.removed_in_version_id`. The approval in `functional-spec.md` W4 also points the item at its new version, sets `lastReviewedAt`, and writes decisions, versions and links. Taken literally, the `UPDATE` on the item row fails and approval cannot work. Which role runs migrations, and which role owns the pg-boss tables, is also unstated. A developer would have to guess, and would likely widen the grant, which defeats NFR9. | Write the full per-table grant list for the `api` and `worker` roles: INSERT-only tables, the exact updatable columns on `items` (current version pointer, `lastReviewedAt`) and on `proposals`, and the pg-boss schema. Name a separate migration role. Add a test for each denied statement. | Unresolved |
+| R-02 | Major | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/security-requirements.md > NFR5.5 | The pass/fail check says "a cross-origin request is refused". The same row says CORS is off and that origin and CSRF rules wait for U2. Turning CORS off does not refuse anything. The browser still sends the request, and the server runs it unless it checks the `Origin` header. The check cannot be met as written, or it silently pulls U2's origin check into U1. | Pick one. Either add a minimal server-side `Origin` check for cookie-authenticated writes to U1 and keep the test, or reword the check to "no CORS headers are returned and `SameSite=Lax` cookies are not sent on cross-site POST". Say plainly that the CSRF gap is a known U1 limit. | Unresolved |
+| R-03 | Minor | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/traceability.json > coverage NFR2, NFR4, NFR6, NFR13 | These are marked `OK`, but U1 covers only part of each. NFR2 only measures latency and enforces no 95%-in-5s target. NFR4 has no 100-person check (U20). NFR6 has no Admin-only raw-source rule (U8). NFR13 has no sync status per connection (U8). The sensor passes ("result":"passed"), but the file overstates coverage. | Mark these `Partial` or `Deferred` and name the unit that closes the rest, as is already done for NFR1, NFR3, NFR7 and NFR8. | Unresolved |
+| R-04 | Minor | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/security-requirements.md > NFR5.1 and NFR13.1 | Caddy proxies only `/v1` and `/mcp`. It is not stated whether `/metrics`, `/healthz` and `/readyz` of `api` and `worker` are reachable from outside the Compose network. `/metrics` is unauthenticated and its labels expose route and job-type names. | State that these endpoints are reachable only on the private network (or Caddy does not route them). Add a test that they return 404 through Caddy. | Unresolved |
+| R-05 | Minor | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/security-requirements.md > NFR5.6 and NFR5.2 | The seeded agent token comes from an environment variable, but the Better Auth API-key plugin stores only hashes and shows the key once. How seeding writes a known token as a hash is not said. NFR5.2 says "CI secret scan" without naming a tool. | Add a line saying the seed hashes the environment-supplied token with the plugin's own method. Name the secret-scan tool, or leave the choice to code generation and say so. | Unresolved |
+| R-06 | Major | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/security-requirements.md > Organisations, NFR14.1 and NFR14.2 | Isolation is stated only for the `api` role and the per-request organisation. The `worker` container also reads and writes organisation data (jobs, proposals, items). Nothing says which database role it uses, that it is not the table owner or `BYPASSRLS`, or how it gets the organisation. Job payloads must not carry content (NFR6.1), so the organisation id would have to travel in the job. The pg-boss tables and Better Auth tables (users, sessions, API keys) are neither named as covered by row-level security nor excluded. A worker running as owner, or a job with no organisation, is a gap across the isolation boundary. | Extend NFR14.1 and NFR14.2 to the `worker` role: no ownership, no `BYPASSRLS`. Require the organisation id in each job and set it per job transaction, and a job with none must fail. State explicitly whether the pg-boss and Better Auth tables are under row-level security or exempt, and why. Add an isolation test for a worker job. | New |
+| R-07 | Minor | aidlc/spaces/default/intents/261125-context-engine/construction/u1-walking-skeleton/nfr-requirements/security-requirements.md > NFR14.2 | "The address" is not defined for U1, which runs locally at one address. The requirement does not say how U1 provides a second organisation to test against (seed data, a second hostname through Caddy). | Say that the seed creates two organisations and how each is addressed in Compose, so the NFR14.2 and NFR14.3 tests can run in U1. | New |
+
+> R-01 Reviewer note: NFR9.2 is unchanged: it still lists only `item_versions`, `decisions`, `proposals.status` and `links.removed_in_version_id`. Nothing covers updatable columns on `items`, the pg-boss schema, a separate migration role, or denial tests. The new NFR14.1 (api is not table owner) makes the missing migration role more pressing.
+
+> R-02 Reviewer note: NFR5.5 still says "a cross-origin request is refused" with CORS off and the origin check deferred to U2. Nothing server-side refuses a cross-origin cookie-authenticated write.
+
+> R-03 Reviewer note: traceability.json still marks NFR2, NFR4, NFR6 and NFR13 as OK, although U1 meets only part of each.
+
+> R-04 Reviewer note: No requirement says `/metrics`, `/healthz` and `/readyz` are private-network only, and no test checks for 404 through Caddy. NFR5.1 and NFR13.1 are unchanged.
+
+> R-05 Reviewer note: NFR5.6 does not say how the seed hashes the env-supplied agent token, and NFR5.2 does not name a secret scanner.
+
+### Validation Tool Results
+
+| Tool | Result | Interpretation |
+|---|---|---|
+| traceability | passed | The coverage file parses and lists NFR1 to NFR15. This does not address the partial-coverage concern in R-03. |
+| required-sections, upstream-coverage, linter, type-check | not run separately | They were not run as separate commands in this pass. Please weigh this; it is not itself grounds for NOT-READY. |
+
+### Summary
+
+The organisation-separation additions are sound for the `api` role. The worker and the supporting tables are left outside the isolation boundary, and two earlier Major findings (R-01, R-02) are unchanged in these files, so three Majors are open.
