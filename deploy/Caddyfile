@@ -1,0 +1,11 @@
+# Self-hosted install and local development: one site block for the install's address(es).
+# SITE_ADDRESS is the install's address, for example "context.example.org"; Caddy obtains its
+# certificate with the standard HTTP challenge. For *.localhost names (local development)
+# Caddy uses its own local CA instead: run `caddy trust` once to stop browser warnings.
+import /etc/caddy/caddy-routes.caddy
+
+import internal-health
+
+{$SITE_ADDRESS:acme.localhost, globex.localhost} {
+	import routes
+}

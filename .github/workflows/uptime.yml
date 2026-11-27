@@ -1,0 +1,29 @@
+# Uptime probe of the hosted copy every 15 minutes (monitoring-design.md): nothing restarts an
+# unhealthy container, so a failing probe notifies the tech leads.
+name: uptime
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    environment: live
+    steps:
+      - name: Health check
+        run: curl --fail --silent --show-error --max-time 10 "https://${{ vars.SERVICE_ADDRESS }}/healthz"
+      - name: MCP search_knowledge on the test organisation
+        env:
+          TOKEN: ${{ secrets.SEED_E2E_A_AGENT_TOKEN }}
+        run: |
+          body='{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_knowledge","arguments":{"query":"W7"}}}'
+          response=$(curl --fail --silent --show-error --max-time 10 \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+            -d "$body" "https://e2e-a.${{ vars.SERVICE_ADDRESS }}/mcp")
+          echo "$response" | grep -q '"result"'
+          ! echo "$response" | grep -q '"isError":true'

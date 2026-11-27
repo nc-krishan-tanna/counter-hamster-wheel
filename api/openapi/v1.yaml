@@ -1,0 +1,247 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Organisational Context Engine API",
+    "version": "1.0.0",
+    "description": "Public API for knowledge items, proposals and decisions, and search (contract C1). This file is written in JSON form, which is valid YAML 1.2; it is the single source of truth for /v1 routes and request validation. The organisation always comes from the address and the credential, never from a parameter. Errors use RFC 9457 problem details with a stable code. U1 serves the routes below; later units add paths and optional fields only."
+  },
+  "servers": [
+    {
+      "url": "https://{host}/v1",
+      "description": "The organisation's own address, for example acme.localhost on a developer machine.",
+      "variables": { "host": { "default": "acme.localhost" } }
+    }
+  ],
+  "security": [{ "session": [] }, { "serviceToken": [] }],
+  "tags": [
+    { "name": "items", "description": "Owner: U3 (U1 first slice). Items, versions and links." },
+    { "name": "proposals", "description": "Owner: U6 (U1 first slice). Proposals and decisions." },
+    { "name": "query", "description": "Owner: U14 (U1 first slice). Search over approved knowledge." }
+  ],
+  "paths": {
+    "/items": {
+      "get": {
+        "tags": ["items"],
+        "operationId": "listItems",
+        "summary": "List approved items of the organisation, cursor-paged.",
+        "parameters": [
+          { "name": "type", "in": "query", "schema": { "$ref": "#/components/schemas/ItemType" } },
+          { "$ref": "#/components/parameters/cursor" },
+          { "$ref": "#/components/parameters/limit" }
+        ],
+        "responses": {
+          "200": { "description": "A page of items: { items: [{ itemId, type, title, lastReviewedAt }], nextCursor }." },
+          "default": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/items/{itemId}": {
+      "get": {
+        "tags": ["items"],
+        "operationId": "getItem",
+        "summary": "The approved version with owners, sources, links both ways, history, and open proposals listed apart as not yet approved (BR4.1). ETag is the current version.",
+        "parameters": [{ "$ref": "#/components/parameters/itemId" }],
+        "responses": {
+          "200": { "description": "The item.", "headers": { "ETag": { "schema": { "type": "string" } } } },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/items/{itemId}/versions": {
+      "get": {
+        "tags": ["items"],
+        "operationId": "listItemVersions",
+        "summary": "Full append-only history: each version with proposer, decider, time, reason and self-approval.",
+        "parameters": [{ "$ref": "#/components/parameters/itemId" }],
+        "responses": {
+          "200": { "description": "{ versions: [...] }, newest first." },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/proposals": {
+      "get": {
+        "tags": ["proposals"],
+        "operationId": "listProposals",
+        "summary": "Proposals visible to the caller; an open create proposal only to its proposer and named human owners.",
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["open", "approved", "rejected", "out-of-date"] } },
+          { "$ref": "#/components/parameters/limit" }
+        ],
+        "responses": {
+          "200": { "description": "{ proposals: [...] }, newest first." },
+          "default": { "$ref": "#/components/responses/Problem" }
+        }
+      },
+      "post": {
+        "tags": ["proposals"],
+        "operationId": "createProposal",
+        "summary": "Raise a proposal (web page, MCP agent or tool). Nothing changes until a human owner approves it (BR1.1).",
+        "parameters": [{ "$ref": "#/components/parameters/idempotencyKey" }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NewProposal" } } }
+        },
+        "responses": {
+          "201": { "description": "Created; the same Idempotency-Key with the same request returns the same proposal." },
+          "403": { "$ref": "#/components/responses/Problem" },
+          "404": { "$ref": "#/components/responses/Problem" },
+          "409": { "$ref": "#/components/responses/Problem" },
+          "422": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/proposals/{proposalId}": {
+      "get": {
+        "tags": ["proposals"],
+        "operationId": "getProposal",
+        "summary": "The proposal with the item's current version beside it. ETag is \"<proposalId>:<status>\".",
+        "parameters": [{ "$ref": "#/components/parameters/proposalId" }],
+        "responses": {
+          "200": { "description": "{ proposal, currentVersion, baseVersion }.", "headers": { "ETag": { "schema": { "type": "string" } } } },
+          "404": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/proposals/{proposalId}/decisions": {
+      "post": {
+        "tags": ["proposals"],
+        "operationId": "decideProposal",
+        "summary": "Approve or reject (a reason is required to reject). Only a human owner of the item may decide; agents never do (BR2.1, BR2.2).",
+        "parameters": [
+          { "$ref": "#/components/parameters/proposalId" },
+          { "name": "If-Match", "in": "header", "required": true, "schema": { "type": "string", "maxLength": 200 }, "description": "ETag of the proposal as the decider saw it." }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NewDecision" } } }
+        },
+        "responses": {
+          "201": { "description": "Decision recorded: { decision, proposal, versionId }." },
+          "403": { "$ref": "#/components/responses/Problem" },
+          "404": { "$ref": "#/components/responses/Problem" },
+          "409": { "$ref": "#/components/responses/Problem" },
+          "412": { "$ref": "#/components/responses/Problem" },
+          "422": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    },
+    "/query/search": {
+      "get": {
+        "tags": ["query"],
+        "operationId": "search",
+        "summary": "Search approved items by title and content (BR4.2); at most 50 results.",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string", "maxLength": 200, "default": "" } },
+          { "name": "type", "in": "query", "schema": { "$ref": "#/components/schemas/ItemType" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 50 } }
+        ],
+        "responses": {
+          "200": { "description": "{ results: [{ itemId, title, type, owners, sources, lastReviewedAt }] }." },
+          "default": { "$ref": "#/components/responses/Problem" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": { "type": "apiKey", "in": "cookie", "name": "__Secure-better-auth.session_token", "description": "Browser session issued by Better Auth." },
+      "serviceToken": { "type": "http", "scheme": "bearer", "description": "Service-account token; the account's role limits every call." }
+    },
+    "parameters": {
+      "itemId": { "name": "itemId", "in": "path", "required": true, "schema": { "type": "string", "maxLength": 64 } },
+      "proposalId": { "name": "proposalId", "in": "path", "required": true, "schema": { "type": "string", "maxLength": 64 } },
+      "cursor": { "name": "cursor", "in": "query", "schema": { "type": "string", "maxLength": 64 } },
+      "limit": { "name": "limit", "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 } },
+      "idempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": "The same key with the same request returns the first result instead of creating a duplicate. Scoped to the caller and the organisation."
+      }
+    },
+    "responses": {
+      "Problem": {
+        "description": "RFC 9457 problem details.",
+        "content": { "application/problem+json": { "schema": { "$ref": "#/components/schemas/Problem" } } }
+      }
+    },
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "required": ["type", "title", "status", "code"],
+        "properties": {
+          "type": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "type": "integer" },
+          "detail": { "type": "string" },
+          "instance": { "type": "string", "description": "The request id." },
+          "code": {
+            "type": "string",
+            "enum": ["unauthenticated", "forbidden", "not-found", "validation-failed", "reason-required", "proposal-out-of-date", "already-decided", "not-an-approver", "conflict", "precondition-failed", "dependency-unavailable", "internal"]
+          },
+          "errors": { "type": "array", "items": { "type": "object", "properties": { "field": { "type": "string" }, "message": { "type": "string" } } } }
+        }
+      },
+      "ItemType": {
+        "type": "string",
+        "enum": ["business-rule-or-policy", "process", "glossary-term", "person", "team", "system", "decision"]
+      },
+      "OwnerRef": {
+        "type": "object",
+        "required": ["kind", "ref_id"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["user", "group", "agent"] },
+          "ref_id": { "type": "string", "maxLength": 64 }
+        }
+      },
+      "LinkRef": {
+        "type": "object",
+        "required": ["toItemId", "linkType"],
+        "properties": {
+          "toItemId": { "type": "string", "maxLength": 64 },
+          "linkType": { "type": "string", "maxLength": 40, "description": "relates-to, depends-on, part-of or applies-to" }
+        }
+      },
+      "NewProposal": {
+        "type": "object",
+        "required": ["kind", "reason", "changes"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["create", "change", "add-link", "remove-link"] },
+          "itemId": { "type": "string", "maxLength": 64, "description": "Required for every kind except create." },
+          "baseVersionId": { "type": "string", "maxLength": 64, "description": "The version the proposal is based on; required for every kind except create." },
+          "reason": { "type": "string", "maxLength": 10000 },
+          "changes": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string", "maxLength": 200 },
+              "type": { "type": "string", "maxLength": 40 },
+              "content": { "type": "string", "maxLength": 100000 },
+              "why": { "type": ["string", "null"], "maxLength": 20000 },
+              "owners": { "type": "array", "maxItems": 50, "items": { "$ref": "#/components/schemas/OwnerRef" } },
+              "sources": {
+                "type": "array",
+                "maxItems": 50,
+                "items": {
+                  "type": "object",
+                  "properties": { "title": { "type": "string", "maxLength": 200 }, "url": { "type": "string", "maxLength": 2000 } }
+                }
+              },
+              "addLinks": { "type": "array", "maxItems": 50, "items": { "$ref": "#/components/schemas/LinkRef" } },
+              "removeLinks": { "type": "array", "maxItems": 50, "items": { "$ref": "#/components/schemas/LinkRef" } }
+            }
+          }
+        }
+      },
+      "NewDecision": {
+        "type": "object",
+        "required": ["outcome"],
+        "properties": {
+          "outcome": { "type": "string", "enum": ["approve", "reject"] },
+          "comment": { "type": "string", "maxLength": 10000, "description": "Required to reject." }
+        }
+      }
+    }
+  }
+}

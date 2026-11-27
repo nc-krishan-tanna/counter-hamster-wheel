@@ -1,0 +1,107 @@
+# Deploy on merge (team practice): every commit on main that passed ci goes straight to the
+# team's live copy; done only when the health check and the W7 check pass on it; otherwise the
+# previous image tag is redeployed (cicd-pipeline.md, Deploy on merge).
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [ci]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Commit to deploy (redeploy a last good commit)
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
+env:
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/context-engine
+  SHA: ${{ github.event.inputs.sha || github.event.workflow_run.head_sha }}
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    # The live environment's secrets are readable from main only.
+    environment: live
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # 1. Publish the five images tagged with the commit.
+      - name: Publish images
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          for name in api worker migrate; do
+            dir=$([ "$name" = migrate ] && echo db || echo "$name")
+            docker build -f "$dir/Dockerfile" -t "$IMAGE_PREFIX-$name:$SHA" .
+            docker push "$IMAGE_PREFIX-$name:$SHA"
+          done
+          for target in web web-hosted; do
+            docker build -f web/Dockerfile --target "$target" -t "$IMAGE_PREFIX-$target:$SHA" .
+            docker push "$IMAGE_PREFIX-$target:$SHA"
+          done
+      - name: SSH setup
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      # 2 and 3. Remember the running tag, then deploy this one (migrate runs first).
+      - name: Deploy
+        id: deploy
+        env:
+          HOST: deploy@${{ vars.SERVICE_ADDRESS }}
+        run: |
+          scp compose.yaml compose.hosted.yaml "$HOST:/opt/context-engine/"
+          scp -r db/init "$HOST:/opt/context-engine/db/"
+          PREVIOUS=$(ssh "$HOST" "grep -s '^IMAGE_TAG=' /opt/context-engine/release.env | cut -d= -f2" || true)
+          echo "previous=$PREVIOUS" >> "$GITHUB_OUTPUT"
+          ssh "$HOST" "cd /opt/context-engine && printf 'IMAGE_TAG=%s\nIMAGE_PREFIX=%s\n' '$SHA' '$IMAGE_PREFIX' > release.env \
+            && docker compose -f compose.yaml -f compose.hosted.yaml --env-file .env --env-file release.env pull \
+            && docker compose -f compose.yaml -f compose.hosted.yaml --env-file .env --env-file release.env up -d --wait --wait-timeout 120"
+      # 4. Done means healthy: the health check and W7 on the live test organisations.
+      - name: Check
+        id: check
+        env:
+          E2E_BASE_HOSTS: e2e-a.${{ vars.SERVICE_ADDRESS }},e2e-b.${{ vars.SERVICE_ADDRESS }}
+          SEED_E2E_A_CONTRIBUTOR_PASSWORD: ${{ secrets.SEED_E2E_A_CONTRIBUTOR_PASSWORD }}
+          SEED_E2E_A_OWNER_PASSWORD: ${{ secrets.SEED_E2E_A_OWNER_PASSWORD }}
+          SEED_E2E_A_AGENT_TOKEN: ${{ secrets.SEED_E2E_A_AGENT_TOKEN }}
+          SEED_E2E_B_OWNER_PASSWORD: ${{ secrets.SEED_E2E_B_OWNER_PASSWORD }}
+          SEED_E2E_B_AGENT_TOKEN: ${{ secrets.SEED_E2E_B_AGENT_TOKEN }}
+        run: |
+          curl --fail --silent --show-error --max-time 10 "https://${{ vars.SERVICE_ADDRESS }}/healthz"
+          npx vitest run --coverage.enabled=false e2e/w7.u1.test.ts
+      # 5. Roll back: previous images only; the previous release's migrate never runs.
+      - name: Roll back
+        if: failure() && steps.deploy.outputs.previous != ''
+        env:
+          HOST: deploy@${{ vars.SERVICE_ADDRESS }}
+          PREVIOUS: ${{ steps.deploy.outputs.previous }}
+          E2E_BASE_HOSTS: e2e-a.${{ vars.SERVICE_ADDRESS }},e2e-b.${{ vars.SERVICE_ADDRESS }}
+          SEED_E2E_A_CONTRIBUTOR_PASSWORD: ${{ secrets.SEED_E2E_A_CONTRIBUTOR_PASSWORD }}
+          SEED_E2E_A_OWNER_PASSWORD: ${{ secrets.SEED_E2E_A_OWNER_PASSWORD }}
+          SEED_E2E_A_AGENT_TOKEN: ${{ secrets.SEED_E2E_A_AGENT_TOKEN }}
+          SEED_E2E_B_OWNER_PASSWORD: ${{ secrets.SEED_E2E_B_OWNER_PASSWORD }}
+          SEED_E2E_B_AGENT_TOKEN: ${{ secrets.SEED_E2E_B_AGENT_TOKEN }}
+        run: |
+          ssh "$HOST" "cd /opt/context-engine && sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG=$PREVIOUS/' release.env \
+            && docker compose -f compose.yaml -f compose.hosted.yaml --env-file .env --env-file release.env up -d --no-deps --wait --wait-timeout 120 web api worker" \
+            || { echo "::error::rollback-failed"; exit 1; }
+          curl --fail --silent --show-error --max-time 10 "https://${{ vars.SERVICE_ADDRESS }}/healthz" || { echo "::error::rollback-failed"; exit 1; }
+          npx vitest run --coverage.enabled=false e2e/w7.u1.test.ts || { echo "::error::rollback-failed"; exit 1; }
+          echo "::error::Deploy of $SHA failed its checks; $PREVIOUS was redeployed."
+          exit 1

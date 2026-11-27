@@ -1,0 +1,9 @@
+aidlc/
+.claude/
+.mcp.json
+node_modules/
+dist/
+coverage/
+package-lock.json
+# Kept in JSON form (valid YAML) so it is read without a YAML parser.
+api/openapi/v1.yaml

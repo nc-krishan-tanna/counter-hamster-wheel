@@ -1,0 +1,132 @@
+# The whole product from containers (NFR12.1). Self-hosted and local: `docker compose up -d --wait`
+# with a filled .env (copy .env.example). The hosted service adds compose.hosted.yaml.
+# Only Caddy's 80 and 443 are published; api, worker and postgres stay on the private network.
+name: context-engine
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '5'
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_DB: ce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # Read once by db/init/01-roles.sql on an empty volume.
+      CE_MIGRATE_PASSWORD: ${CE_MIGRATE_PASSWORD:?}
+      CE_API_PASSWORD: ${CE_API_PASSWORD:?}
+      CE_WORKER_PASSWORD: ${CE_WORKER_PASSWORD:?}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d ce']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    logging: *logging
+
+  migrate:
+    image: ${IMAGE_PREFIX:-context-engine}-migrate:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: db/Dockerfile }
+    environment:
+      DATABASE_URL_MIGRATE: ${DATABASE_URL_MIGRATE:?}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
+      SEED_ACME_CONTRIBUTOR_PASSWORD: ${SEED_ACME_CONTRIBUTOR_PASSWORD:-}
+      SEED_ACME_OWNER_PASSWORD: ${SEED_ACME_OWNER_PASSWORD:-}
+      SEED_ACME_AGENT_TOKEN: ${SEED_ACME_AGENT_TOKEN:-}
+      SEED_GLOBEX_OWNER_PASSWORD: ${SEED_GLOBEX_OWNER_PASSWORD:-}
+      SEED_GLOBEX_AGENT_TOKEN: ${SEED_GLOBEX_AGENT_TOKEN:-}
+      SEED_E2E_A_CONTRIBUTOR_PASSWORD: ${SEED_E2E_A_CONTRIBUTOR_PASSWORD:-}
+      SEED_E2E_A_OWNER_PASSWORD: ${SEED_E2E_A_OWNER_PASSWORD:-}
+      SEED_E2E_A_AGENT_TOKEN: ${SEED_E2E_A_AGENT_TOKEN:-}
+      SEED_E2E_B_OWNER_PASSWORD: ${SEED_E2E_B_OWNER_PASSWORD:-}
+      SEED_E2E_B_AGENT_TOKEN: ${SEED_E2E_B_AGENT_TOKEN:-}
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: 'no'
+    mem_limit: 256m
+    logging: *logging
+
+  api:
+    image: ${IMAGE_PREFIX:-context-engine}-api:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: api/Dockerfile }
+    environment:
+      DATABASE_URL_API: ${DATABASE_URL_API:?}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
+      PUBLIC_BASE_DOMAIN: ${PUBLIC_BASE_DOMAIN:?}
+      PUBLIC_PORT: ${PUBLIC_PORT:-443}
+    depends_on:
+      postgres: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/readyz').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+    restart: unless-stopped
+    mem_limit: 512m
+    logging: *logging
+
+  worker:
+    image: ${IMAGE_PREFIX:-context-engine}-worker:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: worker/Dockerfile }
+    environment:
+      DATABASE_URL_WORKER: ${DATABASE_URL_WORKER:?}
+    depends_on:
+      postgres: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3001/readyz').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+    restart: unless-stopped
+    mem_limit: 256m
+    logging: *logging
+
+  web:
+    image: ${IMAGE_PREFIX:-context-engine}-web:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: web/Dockerfile, target: web }
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-acme.localhost, globex.localhost}
+    ports:
+      - '80:80'
+      - '${PUBLIC_PORT:-443}:443'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:8080/healthz']
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    restart: unless-stopped
+    mem_limit: 128m
+    logging: *logging
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

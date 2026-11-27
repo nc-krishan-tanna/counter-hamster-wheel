@@ -1,0 +1,21 @@
+# The team's hosted service: the bare service address and every organisation's address under it,
+# with one certificate for both names obtained by the DNS challenge (infrastructure specification).
+# TLS_MODE=internal uses Caddy's local CA instead (the hosted-shape end-to-end check in CI).
+import /etc/caddy/caddy-routes.caddy
+
+(tls-dns) {
+	tls {
+		dns cloudflare {env.DNS_API_TOKEN}
+	}
+}
+
+(tls-internal) {
+	tls internal
+}
+
+import internal-health
+
+{$SERVICE_ADDRESS}, *.{$SERVICE_ADDRESS} {
+	import tls-{$TLS_MODE:dns}
+	import routes
+}

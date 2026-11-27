@@ -1,0 +1,19 @@
+{
+  "name": "@ce/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "start": "node src/main.ts"
+  },
+  "dependencies": {
+    "@ce/api": "*",
+    "@ce/db": "*",
+    "fastify": "^5.12.8",
+    "kysely": "^0.29.9",
+    "pg": "^8.23.1",
+    "pg-boss": "^10.4.2",
+    "prom-client": "^15.1.3"
+  }
+}

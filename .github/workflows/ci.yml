@@ -1,0 +1,158 @@
+# Every pull request and every push to main (cicd-pipeline.md, steps 1 to 10). Branch protection
+# on main requires this workflow; any failing step blocks the merge.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/context-engine
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # 1. Install with the lockfile.
+      - run: npm ci
+      # 2. Format, lint (module boundary, no sql.raw), type check.
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      # 4. Secret scan of the repository (NFR5.2).
+      - name: gitleaks
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.28.0 detect --source /repo --redact --no-banner
+      # 5. Vitest with V8 coverage against a real PostgreSQL 16 (testcontainers); below 80% fails.
+      - run: npm test
+      # 6. Every route and MCP tool has an isolation test (NFR14.3).
+      - run: npm run check:isolation
+      # 7. OpenAPI: routes match the document (routes.u1.test.ts); no breaking change against main.
+      - name: OpenAPI breaking-change check
+        run: |
+          if git cat-file -e origin/main:api/openapi/v1.yaml 2>/dev/null; then
+            git show origin/main:api/openapi/v1.yaml > "$RUNNER_TEMP/base-v1.yaml"
+            docker run --rm -v "$RUNNER_TEMP:/base" -v "$PWD/api/openapi:/head" tufin/oasdiff:v1.11.7 \
+              breaking /base/base-v1.yaml /head/v1.yaml --fail-on ERR
+          else
+            echo "No api/openapi/v1.yaml on main yet: nothing to compare."
+          fi
+
+  # 3. Rust jobs, only once a crate exists (tech-stack decision Q5).
+  rust:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - id: crate
+        run: test -f Cargo.toml && echo "exists=true" >> "$GITHUB_OUTPUT" || echo "exists=false" >> "$GITHUB_OUTPUT"
+      - if: steps.crate.outputs.exists == 'true'
+        run: cargo fmt --check && cargo clippy -- -D warnings && cargo test
+
+  end-to-end:
+    runs-on: ubuntu-24.04
+    needs: checks
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Test secrets generated for this run only; never stored.
+      - name: Generate the CI .env
+        run: |
+          rand() { openssl rand -base64 24 | tr -d '/+='; }
+          {
+            echo "POSTGRES_PASSWORD=$(rand)"
+            for r in MIGRATE API WORKER; do echo "CE_${r}_PASSWORD=$(rand)"; done
+            echo "BETTER_AUTH_SECRET=$(rand)$(rand)"
+            echo "PUBLIC_BASE_DOMAIN=localhost"
+            for v in SEED_ACME_CONTRIBUTOR_PASSWORD SEED_ACME_OWNER_PASSWORD SEED_GLOBEX_OWNER_PASSWORD; do echo "$v=$(rand)"; done
+            echo "SEED_ACME_AGENT_TOKEN=ce_$(rand)"
+            echo "SEED_GLOBEX_AGENT_TOKEN=ce_$(rand)"
+          } > .env
+          set -a; . ./.env; set +a
+          {
+            echo "DATABASE_URL_MIGRATE=postgres://ce_migrate:${CE_MIGRATE_PASSWORD}@postgres:5432/ce"
+            echo "DATABASE_URL_API=postgres://ce_api:${CE_API_PASSWORD}@postgres:5432/ce"
+            echo "DATABASE_URL_WORKER=postgres://ce_worker:${CE_WORKER_PASSWORD}@postgres:5432/ce"
+          } >> .env
+      # 8. Build the five images.
+      - run: docker compose build
+      - run: docker build -f web/Dockerfile --target web-hosted -t "$IMAGE_PREFIX-web-hosted:local" .
+      # 9a. End-to-end check, self-hosted shape.
+      - run: docker compose up -d --wait
+      - name: W7 (self-hosted shape)
+        run: |
+          docker compose cp web:/data/caddy/pki/authorities/local/root.crt "$RUNNER_TEMP/caddy-root.crt"
+          set -a; . ./.env; set +a
+          E2E_BASE_HOSTS=acme.localhost,globex.localhost E2E_CA_FILE="$RUNNER_TEMP/caddy-root.crt" \
+            npx vitest run --coverage.enabled=false e2e/w7.u1.test.ts
+      - name: Restart keeps the data (NFR10.7)
+        run: |
+          docker compose restart api worker
+          docker compose up -d --wait
+      - if: failure()
+        run: docker compose logs --no-color
+      - run: docker compose down -v
+      # 9b. Hosted shape: PostgreSQL outside the Compose file, with Supabase's own roles present.
+      - name: W7 (hosted shape)
+        run: |
+          set -a; . ./.env; set +a
+          docker network create ce-hosted
+          docker run -d --name supabase-standin --network ce-hosted -e POSTGRES_DB=ce -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
+            -e CE_MIGRATE_PASSWORD -e CE_API_PASSWORD -e CE_WORKER_PASSWORD \
+            -v "$PWD/db/init:/docker-entrypoint-initdb.d:ro" postgres:16-bookworm
+          until docker exec supabase-standin pg_isready -U postgres -d ce; do sleep 1; done
+          sleep 2
+          docker exec supabase-standin psql -U postgres -d ce -c "CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN;"
+          for v in MIGRATE API WORKER; do
+            lower=$(echo "$v" | tr 'A-Z' 'a-z'); pw_var="CE_${v}_PASSWORD"
+            echo "DATABASE_URL_${v}=postgres://ce_${lower}:${!pw_var}@supabase-standin:5432/ce" >> .env
+          done
+          echo "SERVICE_ADDRESS=localhost" >> .env
+          echo "TLS_MODE=internal" >> .env
+          cat > compose.ci-network.yaml <<'EOF'
+          networks:
+            default:
+              name: ce-hosted
+              external: true
+          EOF
+          docker compose -f compose.yaml -f compose.hosted.yaml -f compose.ci-network.yaml up -d --wait
+          docker compose -f compose.yaml -f compose.hosted.yaml -f compose.ci-network.yaml cp web:/data/caddy/pki/authorities/local/root.crt "$RUNNER_TEMP/caddy-root-hosted.crt"
+          E2E_BASE_HOSTS=acme.localhost,globex.localhost E2E_CA_FILE="$RUNNER_TEMP/caddy-root-hosted.crt" \
+            npx vitest run --coverage.enabled=false e2e/w7.u1.test.ts
+      - if: failure()
+        run: docker compose -f compose.yaml -f compose.hosted.yaml -f compose.ci-network.yaml logs --no-color
+      # 10. Rollback rehearsal: this change's migrate, then main's api and worker images.
+      - name: Rollback rehearsal
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          MAIN_SHA=$(git ls-remote origin refs/heads/main | cut -f1)
+          if ! docker pull "$IMAGE_PREFIX-api:$MAIN_SHA"; then
+            echo "No images for main ($MAIN_SHA) yet: nothing to roll back to."
+            exit 0
+          fi
+          docker pull "$IMAGE_PREFIX-worker:$MAIN_SHA"
+          docker tag "$IMAGE_PREFIX-api:$MAIN_SHA" "$IMAGE_PREFIX-api:previous"
+          docker tag "$IMAGE_PREFIX-worker:$MAIN_SHA" "$IMAGE_PREFIX-worker:previous"
+          docker compose -f compose.yaml -f compose.hosted.yaml -f compose.ci-network.yaml stop api worker
+          IMAGE_TAG=previous docker compose -f compose.yaml -f compose.hosted.yaml -f compose.ci-network.yaml up -d --no-deps --no-build --wait api worker
+          E2E_BASE_HOSTS=acme.localhost,globex.localhost E2E_CA_FILE="$RUNNER_TEMP/caddy-root-hosted.crt" \
+            npx vitest run --coverage.enabled=false e2e/w7.u1.test.ts

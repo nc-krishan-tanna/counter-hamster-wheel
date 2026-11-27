@@ -4,10 +4,11 @@ How U1 meets `../nfr-requirements/reliability-requirements.md`. The approval flo
 
 ## Approval in one transaction (NFR10.1, NFR10.2)
 
-One Kysely transaction at READ COMMITTED. Every decision on an existing item locks in the same order, item first, so decisions on one item queue behind each other and never deadlock:
+One Kysely transaction at READ COMMITTED, opened by `withOrganisation` (`security-design.md`), so every statement below sees only the request's organisation. Every decision on an existing item locks in the same order, item first, so decisions on one item queue behind each other and never deadlock:
 
 ```
 BEGIN
+  set_config('app.organisation_id', <organisation>, true)
   read proposal (no lock) to learn item_id and kind
   IF kind <> create: SELECT item FOR UPDATE      -- all decisions on this item queue here
   SELECT proposal FOR UPDATE
@@ -30,15 +31,16 @@ COMMIT                                   -- any error before this rolls back eve
 
 ## Idempotent proposals (NFR10.3)
 
-- `proposals` has a unique index on `(proposer_id, idempotency_key)` and stores a hash of the normalised request body.
+- `proposals` has a unique index on `(organisation_id, proposer_id, idempotency_key)` and stores a hash of the normalised request body, so the same key in two organisations never collides (C1).
 - On insert conflict: same hash returns the existing proposal (`201` with the original body); a different hash returns `409 conflict`.
 - Within 24 hours this is exactly C1's promise. After 24 hours C1 promises nothing, and the key simply stays taken: the same request still returns the original, a different one gets `409 conflict`. `shortcut: keys never expire, so no clean-up job exists; add expiry if a client ever needs to reuse keys (clients send UUIDs, so none does today).`
 
 ## Jobs (NFR10.4, NFR10.5; Q2)
 
 - The `JobQueue` interface (C3) wraps pg-boss. `enqueue` accepts the caller's Kysely transaction and inserts through the same connection, so a rolled-back change leaves no job.
-- Each job type is created with `retryLimit: 2` (3 attempts in all), `retryBackoff: true`, and a dead-letter queue named `<type>.dead`.
-- U1 ships no production job type. A test-only type proves: enqueue inside a rolled-back transaction leaves no job; a handler failing every time ends in `<type>.dead` after 3 attempts; `defer` re-schedules without counting an attempt.
+- Each job type is created with `retryLimit: 2` (3 attempts in all), `retryBackoff: true`, and a dead-letter queue named `<type>.dead`. Queues are created by the `migrate` step, not at runtime (`security-design.md`, role table).
+- **Every job carries its organisation (C3, NFR14.2).** `enqueue` reads `app.organisation_id` from the caller's transaction, refuses when none is set, and stores it on the job beside the payload. The worker's job runner hands the handler that organisation, and a handler that reads knowledge does so through `/v1` on the internal address with `X-Organisation-Id` set to it (C1 worker access). That internal-address route and the worker's system credential are built with the first job type that reads knowledge (U7, U8 or U9).
+- U1 ships no production job type. A test-only type proves: enqueue inside a rolled-back transaction leaves no job; enqueue with no organisation set is refused; the handler receives the job's organisation; a handler failing every time ends in `<type>.dead` after 3 attempts; `defer` re-schedules without counting an attempt.
 - The worker runs, takes jobs for its registered types (none in U1), and reports health.
 
 ## Health and restart (NFR10.6, NFR10.7)
@@ -60,6 +62,7 @@ COMMIT                                   -- any error before this rolls back eve
 
 ## Sources
 - `../nfr-requirements/reliability-requirements.md` (NFR10.1 to NFR10.7), `../nfr-requirements/tech-stack-decisions.md` (Kysely, pg-boss).
+- `../nfr-requirements/security-requirements.md` (NFR14.2: the worker sets a job's organisation).
 - `../functional-design/functional-spec.md` (W4, errors and edge cases).
-- `inception/contract-design/contract-summary.md` (C1 idempotency and one-decision rule, C3, C8).
-- `nfr-design-questions.md` Q2.
+- `inception/contract-design/contract-summary.md` (C1 idempotency, one-decision rule and worker access, C3 job organisation, C8).
+- `nfr-design-questions.md` Q2 and the confirmed summary.

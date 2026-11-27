@@ -1,0 +1,30 @@
+# The team's hosted service (infrastructure specification): same images, PostgreSQL is Supabase.
+#   docker compose -f compose.yaml -f compose.hosted.yaml --env-file .env --env-file release.env up -d
+# Needs Docker Compose 2.24 or later (for !override).
+services:
+  postgres:
+    # Never started on the hosted shape: the database is Supabase, reached through its session pooler.
+    profiles: [selfhosted]
+
+  # Supabase's CA certificate, for sslmode=verify-full in the database URLs (deploy/README.md).
+  migrate:
+    depends_on: !override {}
+    volumes: ['${SUPABASE_CA_FILE:-/dev/null}:/run/supabase-ca.crt:ro']
+
+  api:
+    depends_on: !override
+      migrate: { condition: service_completed_successfully }
+    volumes: ['${SUPABASE_CA_FILE:-/dev/null}:/run/supabase-ca.crt:ro']
+
+  worker:
+    depends_on: !override
+      migrate: { condition: service_completed_successfully }
+    volumes: ['${SUPABASE_CA_FILE:-/dev/null}:/run/supabase-ca.crt:ro']
+
+  web:
+    image: ${IMAGE_PREFIX:-context-engine}-web-hosted:${IMAGE_TAG:-local}
+    build: { context: ., dockerfile: web/Dockerfile, target: web-hosted }
+    environment: !override
+      SERVICE_ADDRESS: ${SERVICE_ADDRESS:?set SERVICE_ADDRESS in .env}
+      DNS_API_TOKEN: ${DNS_API_TOKEN:-}
+      TLS_MODE: ${TLS_MODE:-dns}

@@ -17,11 +17,12 @@ graph LR
 
 | Component | Contains | Exposed | NFR designs applied |
 |---|---|---|---|
-| `web` (Caddy) | TLS, security headers, routing, static web files | 80, 443 to the host | security (transport, headers, routing) |
-| `api` | Auth hook, Origin check, schema validation, proposal and knowledge modules, MCP server, `JobQueue.enqueue`, metrics | 3000 on the private network | security, reliability (transaction, idempotency), performance, observability |
-| `worker` | pg-boss runner behind `JobQueue`; no job types in U1 | 3001 (health, metrics) on the private network | reliability (retry, dead letter), scalability (leases), observability |
-| `postgres` | Knowledge tables, Better Auth tables, `pgboss` schema; volume `pgdata` | 5432 on the private network | security (roles and grants), reliability (durability) |
-| `migrate` | Kysely and pg-boss migrations, role grants, seed; exits when done | none | security (separate owner role, hashed seed secrets) |
+| `web` (Caddy) | TLS, security headers, routing, static web files; one site block for every organisation's address (`acme.localhost`, `globex.localhost` in U1) | 80, 443 to the host | security (transport, headers, routing) |
+| `api` | Organisation-from-address hook (first `Access.organisation`, C7), auth hook with the credential-matches-organisation check, Origin check, schema validation, `withOrganisation` transaction helper, proposal and knowledge modules, MCP server, `JobQueue.enqueue`, metrics | 3000 on the private network | security, reliability (transaction, idempotency), performance, observability |
+| `worker` | pg-boss runner behind `JobQueue`, handing each handler its job's organisation; no job types in U1 | 3001 (health, metrics) on the private network | reliability (retry, dead letter), scalability (leases), observability |
+| `postgres` | `organisations`, knowledge tables with row-level security and composite organisation keys, Better Auth tables, `pgboss` schema; volume `pgdata` | 5432 on the private network | security (roles, grants, row-level security), reliability (durability) |
+| `migrate` | Kysely and pg-boss migrations, row-level security policies, role grants, seed of both organisations; exits when done | none | security (separate owner role, hashed seed secrets) |
+| CI isolation check | Lists every route and MCP tool and fails when one has no isolation test | GitHub Actions only | security (NFR14.3) |
 
 ## Failure domains
 
@@ -32,6 +33,10 @@ graph LR
 | `postgres` stops | Everything unready; `/readyz` 503 | Volume keeps data; restart |
 | `migrate` fails | `api` and `worker` do not start | Compose `depends_on: service_completed_successfully` |
 | `web` stops | No access from outside | Restart |
+| A query forgets the organisation, or a bug passes the wrong one | At worst one request sees its own organisation's rows or none | Row-level security: no setting means no rows; the setting comes only from the address and credential; composite foreign keys stop a row pointing across organisations |
+| A credential is used at another organisation's address | `404 not-found`; nothing about the other organisation is revealed | Credential-matches-organisation check before any knowledge query |
+
+**Blast radius.** Every failure above affects the whole install (both organisations) except the last two, which are confined to a single request. No failure lets one organisation read or change another's knowledge.
 
 ## Build, test and run (NFR11.1 to NFR11.3, NFR12.1)
 
@@ -52,9 +57,10 @@ Integration tests run against a real PostgreSQL in a container (Compose service 
 | NFR4 sizing | Stateless shape, two-copy test | U20 load check |
 | NFR6 privacy | No content in logs, errors, jobs | U8 (Admin-only raw source content) |
 | NFR13 observability | Health, logs, metrics | U8 (sync status per connection) |
+| NFR14 organisations | Two seeded organisations at their own addresses, row-level security, isolation tests and their CI check | U2 (sign-up, suspension, operators, `ce_system` role); the job types that read knowledge (internal address with `X-Organisation-Id`) |
 
 ## Sources
 - `../nfr-requirements/tech-stack-decisions.md`, `../nfr-requirements/security-requirements.md`, `../nfr-requirements/reliability-requirements.md`, `../nfr-requirements/scalability-requirements.md`, `../nfr-requirements/performance-requirements.md`, `../nfr-requirements/observability-requirements.md`.
-- `../functional-design/functional-spec.md` (W7).
-- `inception/contract-design/contract-summary.md` (containers, C3, C8).
-- Requirements review finding R-03 (partial coverage).
+- `../functional-design/functional-spec.md` (W7, the two seeded organisations).
+- `inception/contract-design/contract-summary.md` (containers, organisations in every contract, C3, C7, C8).
+- NFR requirements review finding R-03 (partial coverage).

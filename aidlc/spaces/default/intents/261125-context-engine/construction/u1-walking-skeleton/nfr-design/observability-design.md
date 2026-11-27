@@ -11,9 +11,10 @@ Caddy sets `X-Request-Id` to its request UUID when the client sent none. Fastify
 Fastify's built-in pino logger, JSON to stdout, one line per completed request:
 
 ```json
-{"time":"...","level":"info","reqId":"...","method":"POST","route":"/v1/proposals","status":201,"ms":42}
+{"time":"...","level":"info","reqId":"...","org":"<organisation id>","method":"POST","route":"/v1/proposals","status":201,"ms":42}
 ```
 
+- `org` is the organisation's id, set once the address is resolved (absent on a `404` for an unknown address). The organisation's name and address are never logged (NFR6).
 - `redact`: `req.headers.authorization`, `req.headers.cookie`. No bodies, query strings or item fields (security NFR6.1).
 - Errors log the error code and stack, not the request body.
 
@@ -33,7 +34,7 @@ Fastify's built-in pino logger, JSON to stdout, one line per completed request:
 | `dead_letter_count` | gauge | type | worker |
 | plus Node.js defaults | | | both |
 
-Labels hold route templates, tool names and job types only, never ids or content. A request that matches no route is labelled `route="unmatched"`, so unknown URLs cannot grow the label set.
+Labels hold route templates, tool names and job types only, never ids, content or the organisation (an organisation label would grow without bound on the hosted service; per-organisation questions are answered from the logs). A request that matches no route is labelled `route="unmatched"`, so unknown URLs cannot grow the label set.
 
 `web` answers `/healthz` (see `reliability-design.md`); `api` and `worker` expose all three C8 endpoints on the private network.
 

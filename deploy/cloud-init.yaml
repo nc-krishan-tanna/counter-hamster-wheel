@@ -1,0 +1,46 @@
+#cloud-config
+# Turns a fresh Ubuntu LTS VM (EU region) into the hosted service's host (infrastructure
+# specification): Docker with Compose 2.24 or later, the `deploy` user, a firewall allowing only
+# 80, 443 and key-only SSH, and log rotation. Replace the SSH public key below before use.
+package_update: true
+package_upgrade: true
+packages:
+  - ca-certificates
+  - curl
+  - ufw
+  - unattended-upgrades
+
+users:
+  - name: deploy
+    shell: /bin/bash
+    lock_passwd: true
+    ssh_authorized_keys:
+      - '<the deploy SSH public key from the GitHub environment "live">'
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/10-hardening.conf
+    content: |
+      PasswordAuthentication no
+      PermitRootLogin no
+      AllowUsers deploy
+  - path: /etc/docker/daemon.json
+    content: |
+      { "log-driver": "json-file", "log-opts": { "max-size": "10m", "max-file": "5" } }
+
+runcmd:
+  # Docker Engine and the Compose plugin from Docker's own repository.
+  - install -m 0755 -d /etc/apt/keyrings
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  - chmod a+r /etc/apt/keyrings/docker.asc
+  - echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" > /etc/apt/sources.list.d/docker.list
+  - apt-get update
+  - apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  # The deploy user runs Compose (root-equivalent; accepted: the VM runs nothing else).
+  - usermod -aG docker deploy
+  - install -d -o deploy -g deploy -m 0750 /opt/context-engine /opt/context-engine/db
+  - ufw default deny incoming
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw --force enable
+  - systemctl restart ssh

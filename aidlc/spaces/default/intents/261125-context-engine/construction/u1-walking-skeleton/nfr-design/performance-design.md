@@ -17,6 +17,8 @@ U1 measures latency and sets no target (`../nfr-requirements/performance-require
 | Search: `ILIKE` on title and content of current versions, max 50 results | `shortcut: a scan, fine for U1's few items; U14 replaces it with indexed full-text search` |
 | Lists are cursor-paged, `limit` at most 200 (C1) | No unbounded queries |
 | No cache | Nothing to invalidate; no measured need |
+| Every knowledge read runs in a short transaction that first sets the organisation (`security-design.md`) | One extra statement per request; the price of row-level security, measured by the same histograms |
+| Indexes on knowledge tables start with `organisation_id` (for example `items (organisation_id, item_id)`, also the target of the composite foreign keys) | The row-level security filter and the lookup use one index |
 
 ## Sources
 - `../nfr-requirements/performance-requirements.md` (NFR2.1), `../nfr-requirements/tech-stack-decisions.md`.

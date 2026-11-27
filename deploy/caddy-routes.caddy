@@ -1,0 +1,45 @@
+# Shared by deploy/Caddyfile and deploy/Caddyfile.hosted (security design, Transport and edge).
+(routes) {
+	encode gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		Content-Security-Policy "default-src 'self'; frame-ancestors 'none'"
+		-Server
+	}
+	# HSTS on deployed copies only; a developer's *.localhost stays free to change.
+	@deployed not host *.localhost localhost
+	header @deployed Strict-Transport-Security "max-age=31536000"
+
+	# Caddy answers its own liveness; the api's and worker's health and metrics stay private.
+	handle /healthz {
+		respond 200
+	}
+	@private path /readyz /metrics
+	handle @private {
+		respond 404
+	}
+
+	# One request id per request, end to end (observability design).
+	@noRequestId not header X-Request-Id *
+	request_header @noRequestId X-Request-Id {http.request.uuid}
+
+	@api path /v1/* /mcp /api/auth/*
+	handle @api {
+		# The Host header passes through unchanged: the api finds the organisation from it.
+		reverse_proxy {$API_UPSTREAMS:api:3000}
+	}
+
+	handle {
+		root * /srv
+		file_server
+	}
+}
+
+# Private listener for the container health check; never published.
+(internal-health) {
+	:8080 {
+		respond /healthz 200
+	}
+}

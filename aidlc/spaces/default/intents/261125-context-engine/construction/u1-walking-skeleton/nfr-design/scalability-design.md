@@ -10,8 +10,9 @@ How U1 meets `../nfr-requirements/scalability-requirements.md`. Stack: `../nfr-r
 | Jobs | PostgreSQL `pgboss` schema |
 | Idempotency keys | `proposals` table |
 | Web files | Baked into the Caddy image |
+| Which organisation a request is for | The address on each request, resolved from `organisations` every time (`security-design.md`) |
 
-Nothing is kept in process memory between requests. Test: a Compose override adds `api2`; Caddy's `reverse_proxy api:3000 api2:3000` sends requests round-robin; a session created through one copy is accepted by the other, and the W7 check passes.
+Nothing is kept in process memory between requests, including the organisation: `app.organisation_id` is set per transaction (`SET LOCAL` semantics), so a pooled connection never carries one organisation's setting into another request. Test: a Compose override adds `api2`; Caddy's `reverse_proxy api:3000 api2:3000` sends requests round-robin; a session created through one copy is accepted by the other, and the W7 check passes.
 
 ## Several workers (NFR4.2)
 
